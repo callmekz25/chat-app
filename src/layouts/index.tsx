@@ -1,0 +1,37 @@
+import Logo from '@/assets/logo.png';
+import { MENU } from '@/shared/constants';
+import { Link, Outlet } from 'react-router-dom';
+const Layout = () => {
+  return (
+    <div className='flex'>
+      <div className='flex flex-col px-3 pb-5 pt-2 h-[100dvh] max-w-[250px] w-[250px] border-r border-gray-800'>
+        <div className='h-[73px] mb-[19px] pt-[25px] pb-4 '>
+          <img src={Logo} alt='logo' className='w-auto object-cover size-10' />
+        </div>
+        <ul className='flex flex-col h-full'>
+          {MENU.map((item) => {
+            return (
+              <li
+                key={item.title}
+                className={`${item.title === 'More' ? 'mt-auto' : ''}`}
+              >
+                <Link
+                  to={``}
+                  className='flex p-3 w-full hover:bg-white/10 transition-all duration-200 rounded-lg my-1 font-normal text-[16px] items-center'
+                >
+                  {item.icon}
+                  <span className='pl-4'>{item.title}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <main className='flex-1 flex justify-center flex-col pb-20'>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default Layout;
