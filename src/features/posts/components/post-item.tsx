@@ -46,7 +46,7 @@ const PostItem = () => {
           pagination={{ clickable: true }}
           spaceBetween={50}
           slidesPerView={1}
-          onSlideChange={() => console.log('slide change')}
+          onSlideChange={(s) => console.log(s)}
           onSwiper={(s) => (swiperRef.current = s)}
         >
           <SwiperSlide>
