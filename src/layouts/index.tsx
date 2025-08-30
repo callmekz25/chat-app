@@ -5,6 +5,8 @@ import { Link, Outlet } from 'react-router-dom';
 import UserNone from '@/assets/user.png';
 const Layout = () => {
   const { data, isLoading } = useGetProfile();
+  console.log(data);
+
   if (isLoading) {
     return <p>loading...</p>;
   }
