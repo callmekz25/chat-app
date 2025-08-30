@@ -1,6 +1,25 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import Cookies from 'js-cookie';
-const httpRequest = axios.create({
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+
+export interface TypedAxiosInstance extends AxiosInstance {
+  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>;
+  post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T>;
+  put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T>;
+  patch<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T>;
+  delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>;
+}
+const httpRequest: TypedAxiosInstance = axios.create({
   baseURL: 'http://localhost:8000/v1',
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
@@ -16,8 +35,6 @@ httpRequest.interceptors.request.use((req) => {
 httpRequest.interceptors.response.use(
   (res) => res.data,
   async (error: AxiosError) => {
-    console.log(error);
-
     const originalRequest = (error.config || {}) as AxiosRequestConfig & {
       _retry?: boolean;
     };
@@ -39,10 +56,10 @@ httpRequest.interceptors.response.use(
         }
         return httpRequest(originalRequest);
       } catch (error) {
-        Cookies.remove('refresh_token');
         return Promise.reject(error);
       }
     }
+
     return Promise.reject(error);
   }
 );

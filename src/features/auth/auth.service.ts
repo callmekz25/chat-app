@@ -1,13 +1,15 @@
 import httpRequest from '@/config/axios.config';
 import { RegisterPayLoad } from './types/register-payload';
 import { LoginPayload } from './types/login-payload';
+import { ApiResponse } from '@/types/api';
 
 export const register = async (payload: RegisterPayLoad) => {
-  const { data } = await httpRequest.post('/auth/register', payload);
-  return data;
+  return await httpRequest.post<ApiResponse>('/auth/register', payload);
 };
 
 export const login = async (payload: LoginPayload) => {
-  const { data } = await httpRequest.post('/auth/login', payload);
-  return data;
+  return await httpRequest.post<ApiResponse<{ access_token: string }>>(
+    '/auth/login',
+    payload
+  );
 };
