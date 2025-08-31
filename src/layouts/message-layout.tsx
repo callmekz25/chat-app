@@ -1,11 +1,13 @@
 import InboxList from '@/features/messages/components/inbox-list';
 import NewMessage from '@/features/messages/components/new-message';
-
 import SearchFollowing from '@/features/messages/components/search-following';
-import AvatarNote from '@/shared/components/ui/avatar-note';
+import { useGetNote } from '@/features/profile/profile.hook';
+import Avatar from '@/shared/components/ui/avatar';
+import BubbleNote from '@/shared/components/ui/bubble-note';
 import { Outlet } from 'react-router-dom';
 
 const MessageLayout = () => {
+  const { data, isError } = useGetNote();
   return (
     <div className='flex h-dvh overflow-hidden'>
       <aside className='h-dvh max-w-[398px] shrink-0 w-[398px] flex flex-col min-w-[398px] border-r border-gray-700'>
@@ -16,10 +18,16 @@ const MessageLayout = () => {
           <SearchFollowing />
         </div>
         <div className='pl-4 mt-4'>
-          <div className='w-fit'>
-            <AvatarNote />
-            <div className='mt-[2px]  text-[12px] font-normal flex items-center justify-center'>
-              v_nguyen04
+          <div className='w-fit flex flex-col items-center'>
+            <div className='flex flex-col items-center'>
+              <BubbleNote
+                value={data?.data?.note.content ?? ''}
+                variant='compact'
+              />
+              <Avatar />
+              <div className='mt-[2px]  text-[12px] font-normal flex items-center justify-center'>
+                v_nguyen04
+              </div>
             </div>
           </div>
         </div>

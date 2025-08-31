@@ -14,6 +14,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^4.40.1
         version: 4.40.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@types/nprogress':
+        specifier: ^0.2.3
+        version: 0.2.3
       axios:
         specifier: ^1.11.0
         version: 1.11.0
@@ -23,6 +26,9 @@ importers:
       lucide-react:
         specifier: ^0.542.0
         version: 0.542.0(react@19.1.1)
+      nprogress:
+        specifier: ^0.2.0
+        version: 0.2.0
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -637,6 +643,9 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
+  '@types/nprogress@0.2.3':
+    resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
+
   '@types/react-dom@19.1.7':
     resolution: {integrity: sha512-i5ZzwYpqjmrKenzkoLM2Ibzt6mAsM7pxB6BCIouEVVmgiqaMj1TjaK7hnA36hbW5aZv20kx7Lw6hWzPWg0Rurw==}
     peerDependencies:
@@ -1240,6 +1249,9 @@ packages:
 
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
+
+  nprogress@0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -1957,6 +1969,8 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/nprogress@0.2.3': {}
+
   '@types/react-dom@19.1.7(@types/react@19.1.11)':
     dependencies:
       '@types/react': 19.1.11
@@ -2567,6 +2581,8 @@ snapshots:
   natural-compare@1.4.0: {}
 
   node-releases@2.0.19: {}
+
+  nprogress@0.2.0: {}
 
   optionator@0.9.4:
     dependencies:

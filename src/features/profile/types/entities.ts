@@ -19,3 +19,8 @@ export type Profile = {
   total_followers: number;
   total_following: number;
 };
+export type Note = {
+  user_id: string;
+  content: string;
+  expires_at: string;
+};

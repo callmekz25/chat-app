@@ -11,37 +11,46 @@ export const MENU = [
   {
     title: 'Home',
     icon: <HomeIcon />,
+    url: '/',
   },
   {
     title: 'Search',
     icon: <SearchIcon />,
+    url: '/',
   },
   {
     title: 'Explore',
     icon: <ExploreIcon />,
+    url: '/',
   },
   {
     title: 'Reels',
     icon: <ReelIcon />,
+    url: '/',
   },
   {
     title: 'Messages',
     icon: <MessageIcon />,
+    url: '/direct/inbox',
   },
   {
     title: 'Notifications',
     icon: <HeartIcon />,
+    url: '/',
   },
   {
     title: 'Create',
     icon: <CreateIcon />,
+    url: '/',
   },
   {
     title: 'Profile',
     icon: '',
+    url: '/1',
   },
   {
     title: 'More',
     icon: <MoreIcon />,
+    url: '/',
   },
 ];

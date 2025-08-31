@@ -9,7 +9,7 @@ const ProtectedRoute = () => {
   }, [pathname]);
   const { data, isLoading, isError } = useGetProfile();
   if (isLoading) {
-    return <p>loading../</p>;
+    return null;
   }
   if (!data || isError) {
     return <Navigate to='/login' />;

@@ -1,14 +1,21 @@
 import CreateIcon from '@/shared/components/icons/create-icon';
 import SettingIcon from '@/shared/components/icons/setting-icon';
-import AvatarNote from '@/shared/components/ui/avatar-note';
 import { Link } from 'react-router-dom';
-import { useGetProfile } from './profile.hook';
+import { useGetNote, useGetProfile } from './profile.hook';
 import { useState } from 'react';
 import AddNoteModal from './components/add-note.modal';
-
+import ExistingNoteModal from './components/existing-note.modal';
+import Avatar from '@/shared/components/ui/avatar';
+import BubbleNote from '@/shared/components/ui/bubble-note';
+import './styles/profile.module.css';
 const Profile = () => {
   const { data } = useGetProfile();
-  const [addNote, setAddNote] = useState(false);
+  const { data: note } = useGetNote();
+
+  const [statusNote, setStatusNote] = useState<'add' | 'existed' | 'close'>(
+    'close'
+  );
+
   return (
     <div className='pt-[30px] max-w-[935px] mx-auto px-5'>
       <div className=''>
@@ -16,8 +23,31 @@ const Profile = () => {
           <div className='flex items-center'>
             <section className='mr-[28px] flex-[0_0_30%]  flex items-center justify-center'>
               <div className=' '>
-                <div className='w-full' onClick={() => setAddNote(true)}>
-                  <AvatarNote className='size-[150px]' />
+                <div className='w-full relative'>
+                  <div className='flex flex-col items-center justify-end min-h-[181px]'>
+                    <div
+                      className=''
+                      onClick={() => {
+                        const value = note?.data?.note?.content
+                          ? 'existed'
+                          : 'add';
+                        setStatusNote(value);
+                      }}
+                    >
+                      <BubbleNote
+                        value={note?.data?.note?.content ?? ''}
+                        variant='compact'
+                      />
+                    </div>
+                    <Avatar className='size-[160px]' />
+                  </div>
+                  {statusNote === 'existed' && (
+                    <ExistingNoteModal
+                      value={note?.data?.note.content ?? ''}
+                      onClose={() => setStatusNote('close')}
+                      onChangeStatusNote={setStatusNote}
+                    />
+                  )}
                 </div>
               </div>
             </section>
@@ -89,8 +119,11 @@ const Profile = () => {
           </section>
         </header>
       </div>
-      {addNote && (
-        <AddNoteModal open={addNote} onClose={() => setAddNote(false)} />
+      {statusNote === 'add' && (
+        <AddNoteModal
+          open={statusNote === 'add'}
+          onClose={() => setStatusNote('close')}
+        />
       )}
     </div>
   );
