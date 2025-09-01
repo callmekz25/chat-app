@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useGetProfile } from '@/features/profile/profile.hook';
+import { useGetMe } from '@/features/profile/profile.hook';
 
 const ProtectedRoute = () => {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-  const { data, isLoading, isError } = useGetProfile();
+  const { data, isLoading, isError } = useGetMe();
   if (isLoading) {
     return null;
   }

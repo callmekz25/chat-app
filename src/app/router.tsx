@@ -1,4 +1,4 @@
-import DirectInbox from '@/features/messages';
+import DirectInbox from '@/features/messages/pages';
 import Layout from '@/layouts';
 import MessageLayout from '@/layouts/message-layout';
 import { lazy } from 'react';
@@ -7,7 +7,7 @@ import ProtectedRoute from './protected-route';
 const Home = lazy(() => import('@/features/home/index'));
 const Login = lazy(() => import('@/features/auth/pages/login'));
 const Register = lazy(() => import('@/features/auth/pages/register'));
-const Profile = lazy(() => import('@/features/profile/index'));
+const Profile = lazy(() => import('@/features/profile/pages/index'));
 
 const router = createBrowserRouter([
   {
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
           },
           {
             element: <Profile />,
-            path: '/:id',
+            path: '/:user_name',
           },
           {
             element: <MessageLayout />,

@@ -1,16 +1,22 @@
 import CreateIcon from '@/shared/components/icons/create-icon';
 import SettingIcon from '@/shared/components/icons/setting-icon';
-import { Link } from 'react-router-dom';
-import { useGetNote, useGetProfile } from './profile.hook';
+import { Link, useParams } from 'react-router-dom';
+import { useGetProfile } from '@/features/profile/profile.hook';
 import { useState } from 'react';
-import AddNoteModal from './components/add-note.modal';
-import ExistingNoteModal from './components/existing-note.modal';
+import ExistingNoteModal from '@/features/profile/components/existing-note.modal';
 import Avatar from '@/shared/components/ui/avatar';
 import BubbleNote from '@/shared/components/ui/bubble-note';
-import './styles/profile.module.css';
+import '@/features/profile/styles/profile.module.css';
+import AddNoteModal from '@/features/profile/components/add-note.modal';
+import OwnProfileActions from '../components/own-profile-actions';
+import OtherProfileActions from '../components/other-profile-actions';
 const Profile = () => {
-  const { data } = useGetProfile();
-  const { data: note } = useGetNote();
+  const { user_name } = useParams();
+  const { data } = useGetProfile(user_name!);
+  const user = data?.data?.user;
+  const relations = data?.data?.relations;
+  const note = data?.data?.note;
+  const isMe = data?.data?.relations?.isMe ?? false;
 
   const [statusNote, setStatusNote] = useState<'add' | 'existed' | 'close'>(
     'close'
@@ -28,14 +34,12 @@ const Profile = () => {
                     <div
                       className=''
                       onClick={() => {
-                        const value = note?.data?.note?.content
-                          ? 'existed'
-                          : 'add';
+                        const value = note?.content ? 'existed' : 'add';
                         setStatusNote(value);
                       }}
                     >
                       <BubbleNote
-                        value={note?.data?.note?.content ?? ''}
+                        value={note?.content ?? ''}
                         variant='compact'
                       />
                     </div>
@@ -43,7 +47,7 @@ const Profile = () => {
                   </div>
                   {statusNote === 'existed' && (
                     <ExistingNoteModal
-                      value={note?.data?.note.content ?? ''}
+                      value={note?.content ?? ''}
                       onClose={() => setStatusNote('close')}
                       onChangeStatusNote={setStatusNote}
                     />
@@ -56,22 +60,14 @@ const Profile = () => {
                 <div className='flex items-center'>
                   <div className='mr-4'>
                     <Link to={``} className='text-xl font-normal'>
-                      {data?.data?.user.user_name}
+                      {user?.user_name}
                     </Link>
                   </div>
-                  <div className='flex items-center gap-2'>
-                    <Link className='w-auto h-[34px] font-semibold px-4 bg-[#25292e] rounded-lg flex items-center justify-center text-sm'>
-                      Edit profile
-                    </Link>
-                    <Link className='w-auto h-[34px] font-semibold px-4 bg-[#25292e] rounded-lg flex items-center justify-center text-sm'>
-                      View archive
-                    </Link>
-                  </div>
-                  <div className=''>
-                    <div className='p-2'>
-                      <SettingIcon />
-                    </div>
-                  </div>
+                  {isMe ? (
+                    <OwnProfileActions />
+                  ) : (
+                    <OtherProfileActions relations={relations!} />
+                  )}
                 </div>
               </section>
               <section className='w-full'>
@@ -84,13 +80,17 @@ const Profile = () => {
                   </li>
                   <li className='mr-10'>
                     <div className='flex items-center gap-1 font-normal'>
-                      <span className=' font-semibold'>2</span>
+                      <span className=' font-semibold'>
+                        {user?.total_followers}
+                      </span>
                       <span className=' opacity-60'>followers</span>
                     </div>
                   </li>
                   <li className=''>
                     <div className='flex items-center gap-1 font-normal'>
-                      <span className=' font-semibold'>2</span>
+                      <span className=' font-semibold'>
+                        {user?.total_followings}
+                      </span>
                       <span className=' opacity-60'>following</span>
                     </div>
                   </li>
@@ -98,9 +98,7 @@ const Profile = () => {
               </section>
               <section className='w-full '>
                 <div className=''>
-                  <span className='text-sm font-normal'>
-                    {data?.data?.user.bio}
-                  </span>
+                  <span className='text-sm font-normal'>{user?.bio}</span>
                 </div>
               </section>
             </div>

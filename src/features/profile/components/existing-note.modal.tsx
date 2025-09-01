@@ -58,7 +58,7 @@ const ExistingNoteModal = ({
           <div className='flex items-center justify-center'>
             <button
               onClick={() => onChangeStatusNote('add')}
-              className=' hover:cursor-pointer font-semibold px-4 h-[34px] text-sm w-full bg-[#4a5df9] rounded-lg'
+              className=' hover:cursor-pointer font-semibold px-4 h-[37px] text-sm w-full bg-[#4a5df9] rounded-lg'
             >
               Leave a new note
             </button>

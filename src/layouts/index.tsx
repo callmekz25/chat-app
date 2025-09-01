@@ -1,11 +1,11 @@
 import Logo from '@/assets/logo.png';
-import { useGetProfile } from '@/features/profile/profile.hook';
-import { MENU } from '@/shared/constants';
+import { useGetMe } from '@/features/profile/profile.hook';
+import { getMenu } from '@/shared/constants';
 import { Link, Outlet } from 'react-router-dom';
 import UserNone from '@/assets/user.png';
 const Layout = () => {
-  const { data } = useGetProfile();
-
+  const { data } = useGetMe();
+  const menu = getMenu(data?.data?.user.user_name ?? '');
   return (
     <div className='flex'>
       <div className='flex flex-col px-3 pb-5 pt-2 sticky top-0   h-[100dvh] max-w-[250px] w-[250px] border-r border-gray-800'>
@@ -13,7 +13,7 @@ const Layout = () => {
           <img src={Logo} alt='logo' className='w-auto object-cover size-10' />
         </div>
         <ul className='flex flex-col h-full'>
-          {MENU.map((item) => {
+          {menu.map((item) => {
             return (
               <li
                 key={item.title}

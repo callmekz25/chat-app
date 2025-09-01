@@ -2,21 +2,20 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   addNote,
   deleteNote,
-  getNote,
+  getMe,
   getProfile,
 } from '@/features/profile/profile.service';
 
-export const useGetProfile = () => {
+export const useGetMe = () => {
   return useQuery({
     queryKey: ['user'],
-    queryFn: getProfile,
+    queryFn: getMe,
   });
 };
-
-export const useGetNote = () => {
+export const useGetProfile = (user_name: string) => {
   return useQuery({
-    queryKey: ['note'],
-    queryFn: getNote,
+    queryKey: ['user-profile', user_name],
+    queryFn: () => getProfile(user_name),
   });
 };
 
