@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useGetMe } from '@/features/profile/profile.hook';
+import Loading from '@/shared/components/ui/loading';
 
 const ProtectedRoute = () => {
   const { pathname } = useLocation();
@@ -9,7 +10,7 @@ const ProtectedRoute = () => {
   }, [pathname]);
   const { data, isLoading, isError } = useGetMe();
   if (isLoading) {
-    return null;
+    return <Loading />;
   }
   if (!data || isError) {
     return <Navigate to='/login' />;

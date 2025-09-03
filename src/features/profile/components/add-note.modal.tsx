@@ -5,6 +5,7 @@ import { useAddNote } from '../profile.hook';
 import { useQueryClient } from '@tanstack/react-query';
 import BubbleNote from '@/shared/components/ui/bubble-note';
 import Avatar from '@/shared/components/ui/avatar';
+import { useParams } from 'react-router-dom';
 
 const AddNoteModal = ({
   open,
@@ -13,14 +14,17 @@ const AddNoteModal = ({
   open: boolean;
   onClose: () => void;
 }) => {
+  const { user_name } = useParams();
   const [note, setNote] = useState('');
   const queryClient = useQueryClient();
   const { mutate: addNote, isPending } = useAddNote();
   const handleAddNote = () => {
     if (note === '') return;
     addNote(note, {
-      onSuccess: (data) => {
-        queryClient.setQueryData(['note'], data);
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['user-profile', user_name],
+        });
         onClose();
       },
     });

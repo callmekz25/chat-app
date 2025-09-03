@@ -3,6 +3,7 @@ import BubbleNote from '@/shared/components/ui/bubble-note';
 import { useEffect, useRef } from 'react';
 import { useDeleteNote } from '../profile.hook';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
 const ExistingNoteModal = ({
   value,
@@ -11,8 +12,9 @@ const ExistingNoteModal = ({
 }: {
   value: string;
   onClose: () => void;
-  onChangeStatusNote: (value: 'add') => void;
+  onChangeStatusNote: (value: 'addNote') => void;
 }) => {
+  const { user_name } = useParams();
   const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const { mutate: deleteNote, isPending } = useDeleteNote();
@@ -21,7 +23,9 @@ const ExistingNoteModal = ({
     if (isPending) return;
     deleteNote(undefined, {
       onSuccess: () => {
-        queryClient.setQueryData(['note'], null);
+        queryClient.invalidateQueries({
+          queryKey: ['user-profile', user_name],
+        });
         onClose();
       },
     });
@@ -57,7 +61,7 @@ const ExistingNoteModal = ({
         <div className='mx-3 mb-3'>
           <div className='flex items-center justify-center'>
             <button
-              onClick={() => onChangeStatusNote('add')}
+              onClick={() => onChangeStatusNote('addNote')}
               className=' hover:cursor-pointer font-semibold px-4 h-[37px] text-sm w-full bg-[#4a5df9] rounded-lg'
             >
               Leave a new note

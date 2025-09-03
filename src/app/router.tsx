@@ -11,10 +11,10 @@ const Profile = lazy(() => import('@/features/profile/pages/index'));
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        element: <ProtectedRoute />,
+        element: <Layout />,
         children: [
           {
             element: <Home />,

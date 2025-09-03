@@ -1,5 +1,4 @@
 import CreateIcon from '@/shared/components/icons/create-icon';
-import SettingIcon from '@/shared/components/icons/setting-icon';
 import { Link, useParams } from 'react-router-dom';
 import { useGetProfile } from '@/features/profile/profile.hook';
 import { useState } from 'react';
@@ -10,18 +9,29 @@ import '@/features/profile/styles/profile.module.css';
 import AddNoteModal from '@/features/profile/components/add-note.modal';
 import OwnProfileActions from '../components/own-profile-actions';
 import OtherProfileActions from '../components/other-profile-actions';
+import FollowersModal from '@/features/follow/components/followers.modal';
+import FollowingsModal from '@/features/follow/components/followings.modal';
+import Loading from '@/shared/components/ui/loading';
+type ModalType =
+  | 'none'
+  | 'addNote'
+  | 'existingNote'
+  | 'followers'
+  | 'followings';
+
 const Profile = () => {
   const { user_name } = useParams();
-  const { data } = useGetProfile(user_name!);
+  const { data, isLoading } = useGetProfile(user_name!);
   const user = data?.data?.user;
   const relations = data?.data?.relations;
   const note = data?.data?.note;
   const isMe = data?.data?.relations?.isMe ?? false;
 
-  const [statusNote, setStatusNote] = useState<'add' | 'existed' | 'close'>(
-    'close'
-  );
+  const [activeModal, setActiveModal] = useState<ModalType>('none');
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <div className='pt-[30px] max-w-[935px] mx-auto px-5'>
       <div className=''>
@@ -34,8 +44,10 @@ const Profile = () => {
                     <div
                       className=''
                       onClick={() => {
-                        const value = note?.content ? 'existed' : 'add';
-                        setStatusNote(value);
+                        const value = note?.content
+                          ? 'existingNote'
+                          : 'addNote';
+                        setActiveModal(value);
                       }}
                     >
                       <BubbleNote
@@ -45,11 +57,11 @@ const Profile = () => {
                     </div>
                     <Avatar className='size-[160px]' />
                   </div>
-                  {statusNote === 'existed' && (
+                  {activeModal === 'existingNote' && (
                     <ExistingNoteModal
                       value={note?.content ?? ''}
-                      onClose={() => setStatusNote('close')}
-                      onChangeStatusNote={setStatusNote}
+                      onClose={() => setActiveModal('none')}
+                      onChangeStatusNote={setActiveModal}
                     />
                   )}
                 </div>
@@ -78,7 +90,10 @@ const Profile = () => {
                       <span className=' opacity-60'>posts</span>
                     </div>
                   </li>
-                  <li className='mr-10'>
+                  <li
+                    className='mr-10 hover:cursor-pointer'
+                    onClick={() => setActiveModal('followers')}
+                  >
                     <div className='flex items-center gap-1 font-normal'>
                       <span className=' font-semibold'>
                         {user?.total_followers}
@@ -86,7 +101,10 @@ const Profile = () => {
                       <span className=' opacity-60'>followers</span>
                     </div>
                   </li>
-                  <li className=''>
+                  <li
+                    className=' hover:cursor-pointer'
+                    onClick={() => setActiveModal('followings')}
+                  >
                     <div className='flex items-center gap-1 font-normal'>
                       <span className=' font-semibold'>
                         {user?.total_followings}
@@ -117,11 +135,17 @@ const Profile = () => {
           </section>
         </header>
       </div>
-      {statusNote === 'add' && (
+      {activeModal === 'addNote' && (
         <AddNoteModal
-          open={statusNote === 'add'}
-          onClose={() => setStatusNote('close')}
+          open={activeModal === 'addNote'}
+          onClose={() => setActiveModal('none')}
         />
+      )}
+      {activeModal === 'followers' && (
+        <FollowersModal open onClose={() => setActiveModal('none')} />
+      )}
+      {activeModal === 'followings' && (
+        <FollowingsModal open onClose={() => setActiveModal('none')} />
       )}
     </div>
   );
