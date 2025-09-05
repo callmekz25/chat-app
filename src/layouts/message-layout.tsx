@@ -1,5 +1,5 @@
 import InboxList from '@/features/messages/components/inbox-list';
-import NewMessage from '@/features/messages/components/new-message';
+import NewInbox from '@/features/messages/components/new-inbox';
 import SearchFollowing from '@/features/messages/components/search-following';
 import Avatar from '@/shared/components/ui/avatar';
 import BubbleNote from '@/shared/components/ui/bubble-note';
@@ -10,7 +10,7 @@ const MessageLayout = () => {
     <div className='flex h-dvh overflow-hidden'>
       <aside className='h-dvh max-w-[398px] shrink-0 w-[398px] flex flex-col min-w-[398px] border-r border-gray-700'>
         <div className='min-h-[74px] pb-3 px-6 pt-[36px] '>
-          <NewMessage />
+          <NewInbox />
         </div>
         <div className='px-[16px]'>
           <SearchFollowing />
@@ -19,7 +19,7 @@ const MessageLayout = () => {
           <div className='w-fit flex flex-col items-center'>
             <div className='flex flex-col items-center'>
               <BubbleNote variant='compact' />
-              <Avatar />
+              <Avatar className='size-[74px]' />
               <div className='mt-[2px]  text-[12px] font-normal flex items-center justify-center'>
                 v_nguyen04
               </div>

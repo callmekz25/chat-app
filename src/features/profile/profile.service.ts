@@ -5,13 +5,17 @@ import { Relations } from './types/relations';
 import { Note } from './types/note';
 
 export const getProfile = async (user_name: string) => {
-  return await httpRequest.get<
+  const { data } = await httpRequest.get<
     ApiResponse<{ user: Profile; relations: Relations; note: Note }>
   >(`/profile/${user_name}`);
+  return data;
 };
 
 export const getMe = async () => {
-  return await httpRequest.get<ApiResponse<{ user: Profile }>>('/profile/me');
+  const { data } = await httpRequest.get<ApiResponse<{ user: Profile }>>(
+    '/profile/me'
+  );
+  return data;
 };
 
 export const addNote = async (content: string) => {

@@ -2,7 +2,8 @@ import BaseModal from '@/shared/components/ui/base-modal';
 import { SearchIcon, XIcon } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { useGetFollowings } from '../follow.hook';
-import FollwerSkeleton from './follower-skeletion';
+import UserSkeleton from '@/shared/components/loading/user-skeleton';
+import Avatar from '@/shared/components/ui/avatar';
 
 const FollowingsModal = ({
   open,
@@ -15,7 +16,7 @@ const FollowingsModal = ({
 
   const { data, isLoading, isError } = useGetFollowings(user_name!);
 
-  const followings = data?.data?.followings;
+  const followings = data?.followings;
 
   return (
     <BaseModal open={open} onClose={onClose}>
@@ -41,7 +42,7 @@ const FollowingsModal = ({
           <div className='min-h-[200px] max-h-[400px] overflow-y-auto'>
             {isLoading ? (
               [...Array(20)].map((_, i) => {
-                return <FollwerSkeleton key={i} />;
+                return <UserSkeleton key={i} />;
               })
             ) : followings && followings.length > 0 ? (
               followings?.map((item) => {
@@ -51,13 +52,9 @@ const FollowingsModal = ({
                       <Link
                         onClick={onClose}
                         to={`/${item.following.user_name}`}
-                        className='flex flex-col size-[44px] mr-3'
+                        className='flex flex-col  mr-3'
                       >
-                        <img
-                          src='https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=580&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-                          alt=''
-                          className='w-full object-cover aspect-square rounded-full'
-                        />
+                        <Avatar className='size-11' />
                       </Link>
                       <div className='flex items-center justify-between flex-1'>
                         <div className=''>

@@ -3,9 +3,10 @@ import { useGetMe } from '@/features/profile/profile.hook';
 import { getMenu } from '@/shared/constants';
 import { Link, Outlet } from 'react-router-dom';
 import UserNone from '@/assets/user.png';
+import Avatar from '@/shared/components/ui/avatar';
 const Layout = () => {
   const { data } = useGetMe();
-  const menu = getMenu(data?.data?.user.user_name ?? '');
+  const menu = getMenu(data?.user.user_name ?? '');
   return (
     <div className='flex'>
       <div className='flex flex-col px-3 pb-5 pt-2 sticky top-0   h-[100dvh] max-w-[250px] w-[250px] border-r border-gray-800'>
@@ -24,11 +25,7 @@ const Layout = () => {
                   className='flex p-3 w-full hover:bg-white/10 transition-all duration-200 rounded-lg my-1 font-normal text-[16px] items-center'
                 >
                   {item.title === 'Profile' ? (
-                    <img
-                      src={UserNone}
-                      alt=''
-                      className='  size-6 aspect-square rounded-full object-contain'
-                    />
+                    <Avatar className='size-6' />
                   ) : (
                     item.icon
                   )}

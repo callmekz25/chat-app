@@ -22,10 +22,10 @@ type ModalType =
 const Profile = () => {
   const { user_name } = useParams();
   const { data, isLoading } = useGetProfile(user_name!);
-  const user = data?.data?.user;
-  const relations = data?.data?.relations;
-  const note = data?.data?.note;
-  const isMe = data?.data?.relations?.isMe ?? false;
+  const user = data?.user;
+  const relations = data?.relations;
+  const note = data?.note;
+  const isMe = data?.relations?.isMe ?? false;
 
   const [activeModal, setActiveModal] = useState<ModalType>('none');
 

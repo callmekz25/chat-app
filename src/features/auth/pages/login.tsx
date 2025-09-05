@@ -15,9 +15,8 @@ const Login = () => {
   const handleLogin = (payload: LoginPayload) => {
     login(payload, {
       onSuccess: (data) => {
-        console.log(data);
         if (data) {
-          localStorage.setItem('access_token', data.data?.access_token);
+          localStorage.setItem('access_token', data.data!.access_token);
           navigate('/', { replace: true });
         }
       },

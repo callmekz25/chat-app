@@ -1,10 +1,10 @@
-import React from 'react';
+import clsx from 'clsx';
 
-const FollwerSkeleton = () => {
+const UserSkeleton = ({ className }: { className?: string }) => {
   return (
-    <div className='py-2 px-4 w-full animate-pulse'>
+    <div className=' w-full animate-pulse'>
       <div className='flex items-center'>
-        <div className='flex flex-col size-[44px] mr-3'>
+        <div className={clsx('flex flex-col size-[44px] mr-3', className)}>
           <div className='w-full aspect-square rounded-full bg-[#1A1A1A]'></div>
         </div>
 
@@ -21,4 +21,4 @@ const FollwerSkeleton = () => {
   );
 };
 
-export default FollwerSkeleton;
+export default UserSkeleton;

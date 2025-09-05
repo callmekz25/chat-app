@@ -5,12 +5,14 @@ export const useGetFollowers = (user_name: string) => {
   return useQuery({
     queryKey: ['followers', user_name],
     queryFn: () => getFollowers(user_name),
+    enabled: !!user_name,
   });
 };
 export const useGetFollowings = (user_name: string) => {
   return useQuery({
     queryKey: ['followings', user_name],
     queryFn: () => getFollowings(user_name),
+    enabled: !!user_name,
   });
 };
 

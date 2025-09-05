@@ -1,6 +1,6 @@
 import { EditIcon } from 'lucide-react';
 
-const NewMessage = () => {
+const NewInbox = () => {
   return (
     <div className='flex items-center justify-between'>
       <h3 className='text-xl font-bold'>v_nguyen04</h3>
@@ -11,4 +11,4 @@ const NewMessage = () => {
   );
 };
 
-export default NewMessage;
+export default NewInbox;

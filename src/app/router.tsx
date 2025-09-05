@@ -8,7 +8,7 @@ const Home = lazy(() => import('@/features/home/index'));
 const Login = lazy(() => import('@/features/auth/pages/login'));
 const Register = lazy(() => import('@/features/auth/pages/register'));
 const Profile = lazy(() => import('@/features/profile/pages/index'));
-
+const Direct = lazy(() => import('@/features/messages/pages/direct'));
 const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
@@ -30,6 +30,10 @@ const router = createBrowserRouter([
               {
                 element: <DirectInbox />,
                 path: '/direct/inbox',
+              },
+              {
+                element: <Direct />,
+                path: '/direct/t/:conversation_id',
               },
             ],
           },
