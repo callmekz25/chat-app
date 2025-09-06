@@ -11,10 +11,44 @@ import Avatar from '@/shared/components/ui/avatar';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { Loader2Icon } from 'lucide-react';
 
+import { useEffect, useState } from 'react';
+import { useSocket } from '@/shared/contexts/socket.provider';
 const Direct = () => {
   const { conversation_id } = useParams();
   const { data, isLoading, isError } = useGetDirectById(conversation_id!);
+  const [historyChat, setHistoryChat] = useState([]);
+  const [message, setMessage] = useState('');
+  const socket = useSocket();
 
+  useEffect(() => {
+    if (socket) {
+      // join room
+      socket.emit('conversation:join', { conversation_id });
+
+      // listen message
+      const onNewMessage = (data: any) => {
+        console.log(data);
+        if (data.conversation_id === conversation_id) {
+          setHistoryChat((prev) => [...prev, data.message]);
+        }
+      };
+      socket.on('message:new', onNewMessage);
+
+      return () => {
+        socket.emit('conversation:leave', { conversation_id });
+        socket.off('message:new', onNewMessage);
+      };
+    }
+  }, [socket, conversation_id]);
+
+  const handleSendMessage = () => {
+    if (!socket) return;
+    socket.emit('message:send', {
+      conversation_id: conversation_id,
+      message: message,
+    });
+    setMessage('');
+  };
   return (
     <div className='h-dvh flex flex-col min-h-0'>
       <div className='p-4 border-b border-gray-700'>
@@ -61,30 +95,39 @@ const Direct = () => {
             <Loader2Icon className=' animate-spin size-8 text-gray-400' />
           </div>
         ) : (
-          <div className='mt-5'>
-            <div className='flex flex-col items-center'>
-              <div className='py-4'>
-                <Avatar className='size-[96px]' />
-              </div>
-              <div className=' text-center'>
-                <span className='leading-6 font-semibold text-xl'>
-                  {data?.direct.name}
+          // <div className='mt-5'>
+          //   <div className='flex flex-col items-center'>
+          //     <div className='py-4'>
+          //       <Avatar className='size-[96px]' />
+          //     </div>
+          //     <div className=' text-center'>
+          //       <span className='leading-6 font-semibold text-xl'>
+          //         {data?.direct.name}
+          //       </span>
+          //     </div>
+          //     <div className=''>
+          //       <span className='leading-[18px] text-sm font-normal opacity-60'>
+          //         {data?.direct.user_name}
+          //       </span>
+          //     </div>
+          //     <div className='py-6'>
+          //       <Link
+          //         to={`/${data?.direct.user_name}`}
+          //         className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
+          //       >
+          //         View profile
+          //       </Link>
+          //     </div>
+          //   </div>
+          // </div>
+          <div className=''>
+            {historyChat.map((m, idx) => (
+              <div key={m._id || idx} className='flex'>
+                <span className='px-3 py-2 rounded-lg bg-gray-700 text-white'>
+                  {m.message}
                 </span>
               </div>
-              <div className=''>
-                <span className='leading-[18px] text-sm font-normal opacity-60'>
-                  {data?.direct.user_name}
-                </span>
-              </div>
-              <div className='py-6'>
-                <Link
-                  to={`/${data?.direct.user_name}`}
-                  className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
-                >
-                  View profile
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
         )}
       </main>
@@ -97,21 +140,38 @@ const Direct = () => {
             <div className='flex-1 ml-2 mr-1'>
               <input
                 type='text'
+                value={message}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                onChange={(e) => setMessage(e.target.value)}
                 className='w-full outline-none text-[15px]'
                 placeholder='Message...'
               />
             </div>
-            <div className='flex items-center'>
-              <div className='p-2'>
-                <VoiceIcon />
+            {message !== '' ? (
+              <button
+                onClick={() => handleSendMessage()}
+                className=' hover:cursor-pointer font-medium text-blue-500 text-sm'
+              >
+                Send
+              </button>
+            ) : (
+              <div className='flex items-center'>
+                <div className='p-2'>
+                  <VoiceIcon />
+                </div>
+                <div className='p-1'>
+                  <ImageIcon />
+                </div>
+                <div className='p-2'>
+                  <StickerIcon />
+                </div>
               </div>
-              <div className='p-1'>
-                <ImageIcon />
-              </div>
-              <div className='p-2'>
-                <StickerIcon />
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

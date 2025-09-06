@@ -1,3 +1,5 @@
+import { reconnectSocket } from '@/shared/socket';
+import { saveAccessToken } from '@/shared/utils/save-access-token';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export interface TypedAxiosInstance extends AxiosInstance {
@@ -49,7 +51,7 @@ httpRequest.interceptors.response.use(
       try {
         const { data } = await httpRequest.post('/auth/refresh-token');
         if (data) {
-          localStorage.setItem('access_token', data?.access_token);
+          saveAccessToken(data?.access_token);
           originalRequest?.headers?.setAuthorization(
             `Bearer ${data?.access_token}`
           );
