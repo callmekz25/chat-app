@@ -10,13 +10,23 @@ import InformationIcon from '@/shared/components/icons/information-icon';
 import Avatar from '@/shared/components/ui/avatar';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { Loader2Icon } from 'lucide-react';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSocket } from '@/shared/contexts/socket.provider';
+import { useGetMessages } from '@/features/messages/message.hook';
+import { useQueryClient } from '@tanstack/react-query';
+import { Message } from '@/features/messages/types/message';
+import MessageItem from '@/features/messages/components/message-item';
 const Direct = () => {
+  const queryClient = useQueryClient();
+  const lastMessage = useRef<HTMLDivElement | null>(null);
   const { conversation_id } = useParams();
-  const { data, isLoading, isError } = useGetDirectById(conversation_id!);
-  const [historyChat, setHistoryChat] = useState([]);
+  const { data, isLoading: ild, isError } = useGetDirectById(conversation_id!);
+  const {
+    data: messageRes,
+    isLoading: ilm,
+    isError: iem,
+  } = useGetMessages(conversation_id!);
+
   const [message, setMessage] = useState('');
   const socket = useSocket();
 
@@ -26,10 +36,17 @@ const Direct = () => {
       socket.emit('conversation:join', { conversation_id });
 
       // listen message
-      const onNewMessage = (data: any) => {
-        console.log(data);
+      const onNewMessage = (data: {
+        conversation_id: string;
+        message: Message;
+      }) => {
         if (data.conversation_id === conversation_id) {
-          setHistoryChat((prev) => [...prev, data.message]);
+          queryClient.setQueryData(
+            ['messages', conversation_id],
+            (oldData: { messages: Message[] } | undefined) => ({
+              messages: [...(oldData?.messages ?? []), data.message],
+            })
+          );
         }
       };
       socket.on('message:new', onNewMessage);
@@ -39,7 +56,13 @@ const Direct = () => {
         socket.off('message:new', onNewMessage);
       };
     }
-  }, [socket, conversation_id]);
+  }, [socket, conversation_id, queryClient]);
+
+  useEffect(() => {
+    if (messageRes?.messages.length && lastMessage.current) {
+      lastMessage.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messageRes?.messages]);
 
   const handleSendMessage = () => {
     if (!socket) return;
@@ -49,11 +72,12 @@ const Direct = () => {
     });
     setMessage('');
   };
+
   return (
     <div className='h-dvh flex flex-col min-h-0'>
       <div className='p-4 border-b border-gray-700'>
         <div className='min-h-[44px]'>
-          {isLoading ? (
+          {ild ? (
             <UserSkeleton />
           ) : (
             <div className='flex items-center  justify-between'>
@@ -90,44 +114,52 @@ const Direct = () => {
         </div>
       </div>
       <main className='flex-1 min-h-0 overflow-y-auto'>
-        {isLoading ? (
+        {ilm ? (
           <div className='flex items-center justify-center mt-2'>
             <Loader2Icon className=' animate-spin size-8 text-gray-400' />
           </div>
-        ) : (
-          // <div className='mt-5'>
-          //   <div className='flex flex-col items-center'>
-          //     <div className='py-4'>
-          //       <Avatar className='size-[96px]' />
-          //     </div>
-          //     <div className=' text-center'>
-          //       <span className='leading-6 font-semibold text-xl'>
-          //         {data?.direct.name}
-          //       </span>
-          //     </div>
-          //     <div className=''>
-          //       <span className='leading-[18px] text-sm font-normal opacity-60'>
-          //         {data?.direct.user_name}
-          //       </span>
-          //     </div>
-          //     <div className='py-6'>
-          //       <Link
-          //         to={`/${data?.direct.user_name}`}
-          //         className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
-          //       >
-          //         View profile
-          //       </Link>
-          //     </div>
-          //   </div>
-          // </div>
+        ) : messageRes && messageRes.messages.length > 0 ? (
           <div className=''>
-            {historyChat.map((m, idx) => (
-              <div key={m._id || idx} className='flex'>
-                <span className='px-3 py-2 rounded-lg bg-gray-700 text-white'>
-                  {m.message}
+            {messageRes?.messages.map((m, index) => {
+              const prevMessage = messageRes.messages[index - 1];
+              const isSameUser =
+                prevMessage && prevMessage.user_id === m.user_id;
+              return (
+                <div
+                  key={m._id}
+                  className={`${isSameUser ? 'mt-1' : 'mt-[17px]'}`}
+                >
+                  <MessageItem message={m} />
+                </div>
+              );
+            })}
+            <div ref={lastMessage}></div>
+          </div>
+        ) : (
+          <div className='mt-5'>
+            <div className='flex flex-col items-center'>
+              <div className='py-4'>
+                <Avatar className='size-[96px]' />
+              </div>
+              <div className=' text-center'>
+                <span className='leading-6 font-semibold text-xl'>
+                  {data?.direct.name}
                 </span>
               </div>
-            ))}
+              <div className=''>
+                <span className='leading-[18px] text-sm font-normal opacity-60'>
+                  {data?.direct.user_name}
+                </span>
+              </div>
+              <div className='py-6'>
+                <Link
+                  to={`/${data?.direct.user_name}`}
+                  className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
+                >
+                  View profile
+                </Link>
+              </div>
+            </div>
           </div>
         )}
       </main>

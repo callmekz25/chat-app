@@ -19,7 +19,7 @@ const InboxList = () => {
           ]
         ) : directsResponse?.directs && directsResponse.directs.length > 0 ? (
           directsResponse.directs.map((item) => {
-            return <InboxItem key={item._id} direct={item} />;
+            return <InboxItem key={item._id} item={item} />;
           })
         ) : (
           <div>Not found</div>

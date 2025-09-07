@@ -1,4 +1,4 @@
-import DirectInbox from '@/features/messages/pages';
+import DirectInbox from '@/features/directs/pages';
 import Layout from '@/layouts';
 import MessageLayout from '@/layouts/message-layout';
 import { lazy } from 'react';
@@ -8,7 +8,7 @@ const Home = lazy(() => import('@/features/home/index'));
 const Login = lazy(() => import('@/features/auth/pages/login'));
 const Register = lazy(() => import('@/features/auth/pages/register'));
 const Profile = lazy(() => import('@/features/profile/pages/index'));
-const Direct = lazy(() => import('@/features/messages/pages/direct'));
+const Direct = lazy(() => import('@/features/directs/pages/direct'));
 const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,

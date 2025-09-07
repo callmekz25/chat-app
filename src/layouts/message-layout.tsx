@@ -1,6 +1,6 @@
-import InboxList from '@/features/messages/components/inbox-list';
-import NewInbox from '@/features/messages/components/new-inbox';
-import SearchFollowing from '@/features/messages/components/search-following';
+import InboxList from '@/features/directs/components/inbox-list';
+import NewInbox from '@/features/directs/components/new-inbox';
+import SearchUsers from '@/features/directs/components/search-users';
 import Avatar from '@/shared/components/ui/avatar';
 import BubbleNote from '@/shared/components/ui/bubble-note';
 import { Outlet } from 'react-router-dom';
@@ -12,8 +12,8 @@ const MessageLayout = () => {
         <div className='min-h-[74px] pb-3 px-6 pt-[36px] '>
           <NewInbox />
         </div>
-        <div className='px-[16px]'>
-          <SearchFollowing />
+        <div className='px-[16px] relative'>
+          <SearchUsers />
         </div>
         <div className='pl-4 mt-4'>
           <div className='w-fit flex flex-col items-center'>
