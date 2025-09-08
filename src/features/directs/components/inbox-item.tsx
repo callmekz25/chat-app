@@ -12,17 +12,24 @@ const InboxItem = ({ item }: { item: Direct | Profile }) => {
 
   const handleNavigateConversation = () => {
     if (!item || isPending) return;
-    const payload: CreateDirect = {
-      other_user_id: item._id,
-      type: 'direct',
-    };
-    mutate(payload, {
-      onSuccess: (data) => {
-        if (data) {
-          navigate(`/direct/t/${data.conversation_id}`);
-        }
-      },
-    });
+    // Item is a conversation just navigate
+    if ('name' in item) {
+      navigate(`/direct/t/${item._id}`);
+    }
+    // Item is a user then create conversation and navigate
+    else {
+      const payload: CreateDirect = {
+        other_user_id: item._id,
+        type: 'direct',
+      };
+      mutate(payload, {
+        onSuccess: (data) => {
+          if (data) {
+            navigate(`/direct/t/${data.conversation_id}`);
+          }
+        },
+      });
+    }
   };
   return (
     <div

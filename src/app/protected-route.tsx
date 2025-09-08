@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useGetMe } from '@/features/profile/profile.hook';
 import Loading from '@/shared/components/ui/loading';
+import { SocketProvider } from '@/shared/contexts/socket.provider';
 
 const ProtectedRoute = () => {
   const { pathname } = useLocation();
@@ -16,7 +17,11 @@ const ProtectedRoute = () => {
     return <Navigate to='/login' />;
   }
 
-  return <Outlet />;
+  return (
+    <SocketProvider>
+      <Outlet />
+    </SocketProvider>
+  );
 };
 
 export default ProtectedRoute;
