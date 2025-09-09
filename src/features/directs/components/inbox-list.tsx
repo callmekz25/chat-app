@@ -1,8 +1,10 @@
 import InboxItem from './inbox-item';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
-import { useGetDirects } from '../direct.hook';
+import { useGetDirects } from '../direct.hooks';
+import { useParams } from 'react-router-dom';
 
 const InboxList = () => {
+  const { conversation_id } = useParams();
   const { data: directsResponse, isLoading, isError } = useGetDirects();
 
   return (
@@ -19,7 +21,13 @@ const InboxList = () => {
           ]
         ) : directsResponse?.directs && directsResponse.directs.length > 0 ? (
           directsResponse.directs.map((item) => {
-            return <InboxItem key={item._id} item={item} />;
+            return (
+              <InboxItem
+                key={item._id}
+                item={item}
+                isActive={conversation_id === item._id}
+              />
+            );
           })
         ) : (
           <div>Not found</div>

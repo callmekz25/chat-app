@@ -29,7 +29,7 @@ const router = createBrowserRouter([
             children: [
               {
                 element: <DirectInbox />,
-                path: '/direct/inbox',
+                path: '/direct',
               },
               {
                 element: <Direct />,

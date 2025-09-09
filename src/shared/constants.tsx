@@ -9,11 +9,11 @@ import SearchIcon from './components/icons/search-icon';
 
 export const getMenu = (user_name: string) => [
   { title: 'Home', icon: <HomeIcon />, url: '/' },
-  { title: 'Search', icon: <SearchIcon />, url: '/' },
+  { title: 'Search', icon: <SearchIcon /> },
   { title: 'Explore', icon: <ExploreIcon />, url: '/' },
   { title: 'Reels', icon: <ReelIcon />, url: '/' },
-  { title: 'Messages', icon: <MessageIcon />, url: '/direct/inbox' },
-  { title: 'Notifications', icon: <HeartIcon />, url: '/' },
+  { title: 'Messages', icon: <MessageIcon />, url: '/direct' },
+  { title: 'Notifications', icon: <HeartIcon /> },
   { title: 'Create', icon: <CreateIcon />, url: '/' },
   { title: 'Profile', icon: '', url: `/${user_name}` },
   { title: 'More', icon: <MoreIcon />, url: '/' },

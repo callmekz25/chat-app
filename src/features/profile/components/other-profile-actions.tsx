@@ -1,4 +1,4 @@
-import { useFollowUser } from '@/features/follow/follow.hook';
+import { useFollowUser } from '@/features/follow/follow.hooks';
 import { ChevronDownIcon, EllipsisIcon, Loader2 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { Relations } from '../types/relations';

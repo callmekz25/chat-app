@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getMessagesByConversationId } from './message.service';
+import { getMessagesByConversationId } from './message.services';
 
 export const useGetMessages = (conversation_id: string) => {
   return useQuery({
@@ -13,7 +13,6 @@ export const useGetInfiniteMessages = (conversation_id: string) => {
   return useInfiniteQuery({
     queryKey: ['messages', conversation_id],
     queryFn: ({ pageParam }) => {
-      console.log(pageParam);
       return getMessagesByConversationId(
         conversation_id,
         pageParam as string | undefined

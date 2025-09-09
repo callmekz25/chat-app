@@ -1,7 +1,7 @@
 import BaseModal from '@/shared/components/ui/base-modal';
 import { XIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useAddNote } from '../profile.hook';
+import { useAddNote } from '../profile.hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import BubbleNote from '@/shared/components/ui/bubble-note';
 import Avatar from '@/shared/components/ui/avatar';

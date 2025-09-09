@@ -1,6 +1,6 @@
 import CreateIcon from '@/shared/components/icons/create-icon';
 import { Link, useParams } from 'react-router-dom';
-import { useGetProfile } from '@/features/profile/profile.hook';
+import { useGetProfile } from '@/features/profile/profile.hooks';
 import { useState } from 'react';
 import ExistingNoteModal from '@/features/profile/components/existing-note.modal';
 import Avatar from '@/shared/components/ui/avatar';

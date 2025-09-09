@@ -1,14 +1,16 @@
 const HeartIcon = ({
   className,
+  noti = false,
   fill = false,
 }: {
   className?: string;
+  noti?: boolean;
   fill?: boolean;
 }) => {
   return (
     <svg
       aria-label='Notifications'
-      fill={`${fill ? 'red' : 'white'}`}
+      fill={`${noti ? 'red' : 'white'}`}
       className={className}
       height='24'
       role='img'

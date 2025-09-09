@@ -8,7 +8,7 @@ export const getMessagesByConversationId = async (
   limit: number = 20
 ) => {
   const { data } = await httpRequest.get<
-    ApiResponse<{ messages: Message[]; nextCursor: string; hasMore: boolean }>
+    ApiResponse<{ messages: Message[]; nextCursor: string }>
   >(`/messages/${conversation_id}`, {
     params: {
       before: cursor,

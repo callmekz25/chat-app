@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { RegisterPayLoad } from './types/register-payload';
-import { login, register } from './auth.service';
+import { login, register } from './auth.services';
 import { LoginPayload } from './types/login-payload';
 
 export const useRegister = () => {

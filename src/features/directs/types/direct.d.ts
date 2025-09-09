@@ -1,3 +1,4 @@
+import { Message } from '@/features/messages/types/message';
 import { Participant } from './participant';
 
 export type Direct = {
@@ -9,6 +10,6 @@ export type Direct = {
     url: string;
     public_id: string;
   };
-  last_message_id?: string;
+  last_message: Message;
   last_message_at?: string;
 };

@@ -2,7 +2,7 @@ import Landing from '@/assets/landing.png';
 import Logo from '@/assets/logo.png';
 import { useForm } from 'react-hook-form';
 import { LoginPayload } from '../types/login-payload';
-import { useLogin } from '../auth.hook';
+import { useLogin } from '../auth.hooks';
 import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();

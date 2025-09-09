@@ -1,7 +1,7 @@
 import BaseModal from '@/shared/components/ui/base-modal';
 import { SearchIcon, XIcon } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { useGetFollowings } from '../follow.hook';
+import { useGetFollowings } from '../follow.hooks';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import Avatar from '@/shared/components/ui/avatar';
 

@@ -1,7 +1,7 @@
 import Avatar from '@/shared/components/ui/avatar';
 import BubbleNote from '@/shared/components/ui/bubble-note';
 import { useEffect, useRef } from 'react';
-import { useDeleteNote } from '../profile.hook';
+import { useDeleteNote } from '../profile.hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 

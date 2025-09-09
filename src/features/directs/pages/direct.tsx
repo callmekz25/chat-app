@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { useGetDirectById } from '../direct.hook';
+import { useGetDirectById } from '../direct.hooks';
 import CallIcon from '@/shared/components/icons/call-icon';
 import CallVideoIcon from '@/shared/components/icons/call-video-icon';
 import InformationIcon from '@/shared/components/icons/information-icon';
@@ -8,25 +8,17 @@ import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { Loader2Icon } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSocket } from '@/shared/contexts/socket.provider';
-import { useGetInfiniteMessages } from '@/features/messages/message.hook';
+import { useGetInfiniteMessages } from '@/features/messages/message.hooks';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Message } from '@/features/messages/types/message';
 import MessageItem from '@/features/messages/components/message-item';
-import { useInView } from 'react-intersection-observer';
 import MessageInput from '../components/message-input';
+import InfiniteScrollContainer from '@/shared/infinite-scroll-container';
 const Direct = () => {
   const queryClient = useQueryClient();
-
-  const isFirstLoadRef = useRef(true);
-  const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
-  const { ref: topRef, inView } = useInView({
-    root: rootEl,
-    threshold: 0,
-    skip: isFirstLoadRef.current,
-  });
-
   const lastMessage = useRef<HTMLDivElement | null>(null);
-
+  const isFirstLoad = useRef(true);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { conversation_id } = useParams();
   const { data, isLoading: ild, isError } = useGetDirectById(conversation_id!);
   const {
@@ -35,6 +27,7 @@ const Direct = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isFetching,
   } = useGetInfiniteMessages(conversation_id!);
 
   const socket = useSocket();
@@ -81,50 +74,32 @@ const Direct = () => {
     }
   }, [socket, conversation_id, queryClient]);
 
-  const messages = useMemo(
-    () =>
-      (messagesRes?.pages ?? [])
-        .slice()
-        .reverse()
-        .flatMap((p) => p.messages),
-    [messagesRes]
-  );
-  console.log(isFirstLoadRef.current);
+  const messages = (messagesRes?.pages ?? [])
+    .slice()
+    .reverse()
+    .flatMap((p) => p.messages);
 
   useEffect(() => {
-    isFirstLoadRef.current = true;
-  }, [conversation_id]);
-
-  useEffect(() => {
-    if (!isLoading && rootEl && isFirstLoadRef.current) {
+    if (messages.length && isFirstLoad.current) {
       requestAnimationFrame(() => {
-        rootEl.scrollTop = rootEl.scrollHeight;
-        isFirstLoadRef.current = false;
+        lastMessage.current?.scrollIntoView({ behavior: 'auto' });
       });
+      isFirstLoad.current = false;
     }
-  }, [isLoading, rootEl]);
+  }, [messages]);
 
-  useEffect(() => {
-    if (!inView || isLoading || !hasNextPage || isFetchingNextPage || !rootEl)
-      return;
+  const handleTopReached = async () => {
+    if (!hasNextPage || isFetching) return;
+    const el = containerRef.current!;
+    const prevHeight = el.scrollHeight;
+    const prevTop = el.scrollTop;
 
-    const prevH = rootEl.scrollHeight;
-    const prevTop = rootEl.scrollTop;
-
-    fetchNextPage().finally(() => {
-      requestAnimationFrame(() => {
-        rootEl.scrollTop = prevTop + (rootEl.scrollHeight - prevH);
-      });
+    await fetchNextPage();
+    requestAnimationFrame(() => {
+      const newHeight = el.scrollHeight;
+      el.scrollTop = prevTop + (newHeight - prevHeight);
     });
-  }, [
-    inView,
-    isLoading,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    rootEl,
-  ]);
-
+  };
   return (
     <div className='h-dvh flex flex-col min-h-0'>
       <div className='p-4 border-b border-gray-700'>
@@ -165,19 +140,18 @@ const Direct = () => {
           )}
         </div>
       </div>
-      <main className='flex-1 min-h-0 overflow-y-auto' ref={setRootEl}>
-        <div className='mt-1' ref={topRef}></div>
-        {isFetchingNextPage && (
-          <div className='flex items-center justify-center mt-2'>
-            <Loader2Icon className=' animate-spin size-8 text-gray-400' />
-          </div>
-        )}
+      <main className='flex-1 min-h-0 overflow-y-auto' ref={containerRef}>
         {isLoading ? (
           <div className='flex items-center justify-center mt-2'>
             <Loader2Icon className=' animate-spin size-8 text-gray-400' />
           </div>
         ) : messages?.length ? (
-          <div className=''>
+          <InfiniteScrollContainer onTopReached={handleTopReached}>
+            {isFetchingNextPage && (
+              <div className='flex items-center justify-center mt-2'>
+                <Loader2Icon className=' animate-spin size-8 text-gray-400' />
+              </div>
+            )}
             {messages.map((m, index) => {
               const prevMessage = messages[index - 1];
               const isSameUser =
@@ -193,7 +167,7 @@ const Direct = () => {
               );
             })}
             <div className='' ref={lastMessage}></div>
-          </div>
+          </InfiniteScrollContainer>
         ) : (
           <div className='mt-5'>
             <div className='flex flex-col items-center'>

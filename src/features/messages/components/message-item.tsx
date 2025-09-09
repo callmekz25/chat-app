@@ -1,4 +1,4 @@
-import { useGetMe } from '@/features/profile/profile.hook';
+import { useGetMe } from '@/features/profile/profile.hooks';
 import { Message } from '../types/message';
 import Avatar from '@/shared/components/ui/avatar';
 

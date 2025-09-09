@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getDirectById, getDirects, getOrCreateDirect } from './direct.service';
+import { getDirectById, getDirects, getOrCreateDirect } from './direct.services';
 import { CreateDirect } from './types/create-direct';
 
 export const useGetOrCreateDirect = () => {

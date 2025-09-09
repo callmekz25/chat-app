@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { followUser, getFollowers, getFollowings } from './follow.service';
+import { followUser, getFollowers, getFollowings } from './follow.services';
 
 export const useGetFollowers = (user_name: string) => {
   return useQuery({

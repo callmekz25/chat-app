@@ -4,7 +4,7 @@ import {
   deleteNote,
   getMe,
   getProfile,
-} from '@/features/profile/profile.service';
+} from '@/features/profile/profile.services';
 
 export const useGetMe = () => {
   return useQuery({

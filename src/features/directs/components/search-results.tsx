@@ -1,5 +1,5 @@
-import { useGetFollowings } from '@/features/follow/follow.hook';
-import { useGetMe } from '@/features/profile/profile.hook';
+import { useGetFollowings } from '@/features/follow/follow.hooks';
+import { useGetMe } from '@/features/profile/profile.hooks';
 import InboxItem from './inbox-item';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 
