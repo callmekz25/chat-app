@@ -14,7 +14,9 @@ import { Message } from '@/features/messages/types/message';
 import MessageItem from '@/features/messages/components/message-item';
 import MessageInput from '../components/message-input';
 import InfiniteScrollContainer from '@/shared/infinite-scroll-container';
+import { useGetMe } from '@/features/profile/profile.hooks';
 const Direct = () => {
+  const { data: userRes } = useGetMe();
   const queryClient = useQueryClient();
   const lastMessage = useRef<HTMLDivElement | null>(null);
   const isFirstLoad = useRef(true);
@@ -31,11 +33,26 @@ const Direct = () => {
   } = useGetInfiniteMessages(conversation_id!);
 
   const socket = useSocket();
+  const messages = (messagesRes?.pages ?? [])
+    .slice()
+    .reverse()
+    .flatMap((p) => p.messages);
 
   useEffect(() => {
     if (socket) {
       socket.emit('conversation:join', { conversation_id });
 
+      if (messages.length > 0) {
+        const lastMessage = [...messages]
+          .reverse()
+          .find((m) => m.user_id !== userRes?.user._id);
+        console.log(lastMessage);
+
+        socket.emit('conversation:seen', {
+          conversation_id: conversation_id,
+          message_id: lastMessage._id,
+        });
+      }
       const onNewMessage = (data: {
         conversation_id: string;
         message: Message;
@@ -64,6 +81,10 @@ const Direct = () => {
             behavior: 'smooth',
           });
         });
+        socket.emit('conversation:seen', {
+          conversation_id: conversation_id,
+          message_id: data.message._id,
+        });
       };
       socket.on('message:new', onNewMessage);
 
@@ -72,12 +93,7 @@ const Direct = () => {
         socket.off('message:new', onNewMessage);
       };
     }
-  }, [socket, conversation_id, queryClient]);
-
-  const messages = (messagesRes?.pages ?? [])
-    .slice()
-    .reverse()
-    .flatMap((p) => p.messages);
+  }, [socket, conversation_id, queryClient, messages]);
 
   useEffect(() => {
     if (messages.length && isFirstLoad.current) {

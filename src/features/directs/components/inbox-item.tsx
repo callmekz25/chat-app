@@ -17,6 +17,8 @@ const InboxItem = ({
   const { data } = useGetMe();
   const { mutate, isPending } = useGetOrCreateDirect();
 
+  const isSeen = 'name' in item && item.last_message.is_seen;
+  const lastMessage = 'name' in item ? item.last_message : null;
   const handleNavigateConversation = () => {
     if (!item || isPending) return;
     // Item is a conversation just navigate
@@ -49,18 +51,21 @@ const InboxItem = ({
         <Avatar className='size-[56px]' />
       </div>
       <div className=''>
-        <div className='w-[244px] text-sm'>
-          <span>{'name' in item ? item.name : item.full_name}</span>
+        <div className={`w-[244px] text-sm `}>
+          <span className={`${isSeen ? '' : 'font-semibold'}`}>
+            {'name' in item ? item.name : item.full_name}
+          </span>
         </div>
         <div className=''>
-          <span className='text-[12px] font-normal opacity-60 truncate block max-w-[247px] '>
-            {'name' in item
-              ? item.last_message
-                ? item.last_message.user_id === data?.user._id
-                  ? `You: ${item.last_message.message}`
-                  : item.last_message.message
-                : 'Active 1m ago'
-              : item.user_name}
+          <span
+            className={`text-[12px] font-normal  truncate block max-w-[247px]  ${
+              isSeen ? 'opacity-60' : 'font-semibold'
+            }`}
+          >
+            {lastMessage &&
+              (lastMessage.user_id === data?.user._id
+                ? `You: ${lastMessage.message}`
+                : lastMessage.message)}
           </span>
         </div>
       </div>

@@ -6,4 +6,6 @@ export type Message = {
   is_edited: boolean;
   message: string;
   conversation_id: string;
+  is_seen: boolean;
+  seen_by: string[];
 };

@@ -13,17 +13,30 @@ const MessageItem = ({ message }: { message: Message }) => {
           </div>
         </div>
       )}
+
       <div
-        className={` w-fit py-1  px-3 rounded-[18px] max-w-[564px] ${
-          data?.user._id === message.user_id
-            ? 'bg-[#3797F0] ml-auto'
-            : 'mr-auto bg-[#262626]'
-        }`}
+        className={`${
+          data?.user._id === message.user_id ? ' ml-auto' : 'mr-auto '
+        } flex flex-col items-end`}
       >
-        <span className='text-[15px] font-normal break-words leading-5'>
-          {message.message}
-        </span>
+        <div
+          className={` w-fit py-1  px-3 rounded-[18px] max-w-[564px] ${
+            data?.user._id === message.user_id
+              ? 'bg-[#3797F0]'
+              : ' bg-[#262626]'
+          }`}
+        >
+          <span className='text-[15px] font-normal break-words leading-5'>
+            {message.message}
+          </span>
+        </div>
+        {message.seen_by.length > 0 && (
+          <div className=' px-3'>
+            <span className='text-[12px] opacity-80 leading-4'>Seen</span>
+          </div>
+        )}
       </div>
+
       {data?.user._id === message.user_id && <div className='w-4'></div>}
     </div>
   );
