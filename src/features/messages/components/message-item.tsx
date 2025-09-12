@@ -30,7 +30,7 @@ const MessageItem = ({ message }: { message: Message }) => {
             {message.message}
           </span>
         </div>
-        {message.seen_by.length > 0 && (
+        {message?.seen_by && message.seen_by.length > 0 && (
           <div className=' px-3'>
             <span className='text-[12px] opacity-80 leading-4'>Seen</span>
           </div>

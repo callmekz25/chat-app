@@ -1,6 +1,6 @@
 import Avatar from '@/shared/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
-import { Direct } from '../types/direct';
+import { FormattedDirect } from '../types/direct';
 import { Profile } from '@/features/profile/types/profile';
 import { useGetOrCreateDirect } from '../direct.hooks';
 import { CreateDirect } from '../types/create-direct';
@@ -10,7 +10,7 @@ const InboxItem = ({
   item,
   isActive,
 }: {
-  item: Direct | Profile;
+  item: FormattedDirect | Profile;
   isActive: boolean;
 }) => {
   const navigate = useNavigate();

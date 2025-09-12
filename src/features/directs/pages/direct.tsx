@@ -6,23 +6,26 @@ import InformationIcon from '@/shared/components/icons/information-icon';
 import Avatar from '@/shared/components/ui/avatar';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { Loader2Icon } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSocket } from '@/shared/contexts/socket.provider';
 import { useGetInfiniteMessages } from '@/features/messages/message.hooks';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query';
-import { Message } from '@/features/messages/types/message';
 import MessageItem from '@/features/messages/components/message-item';
 import MessageInput from '../components/message-input';
 import InfiniteScrollContainer from '@/shared/infinite-scroll-container';
 import { useGetMe } from '@/features/profile/profile.hooks';
+import { Profile } from '@/features/profile/types/profile';
 const Direct = () => {
   const { data: userRes } = useGetMe();
-  const queryClient = useQueryClient();
   const lastMessage = useRef<HTMLDivElement | null>(null);
   const isFirstLoad = useRef(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const { conversation_id } = useParams();
-  const { data, isLoading: ild, isError } = useGetDirectById(conversation_id!);
+
+  const {
+    data,
+    isLoading: ild,
+    isError,
+  } = useGetDirectById(conversation_id!, userRes?.user._id ?? '');
   const {
     data: messagesRes,
     fetchNextPage,
@@ -30,7 +33,13 @@ const Direct = () => {
     isFetchingNextPage,
     isLoading,
     isFetching,
-  } = useGetInfiniteMessages(conversation_id!);
+  } = useGetInfiniteMessages(conversation_id!, () => {
+    requestAnimationFrame(() => {
+      lastMessage.current?.scrollIntoView({
+        behavior: 'smooth',
+      });
+    });
+  });
 
   const socket = useSocket();
   const messages = (messagesRes?.pages ?? [])
@@ -40,60 +49,25 @@ const Direct = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.emit('conversation:join', { conversation_id });
-
       if (messages.length > 0) {
         const lastMessage = [...messages]
           .reverse()
           .find((m) => m.user_id !== userRes?.user._id);
-        console.log(lastMessage);
 
-        socket.emit('conversation:seen', {
-          conversation_id: conversation_id,
-          message_id: lastMessage._id,
-        });
-      }
-      const onNewMessage = (data: {
-        conversation_id: string;
-        message: Message;
-      }) => {
-        if (data.conversation_id !== conversation_id) return;
-
-        queryClient.setQueryData<InfiniteData<{ messages: Message[] }>>(
-          ['messages', conversation_id],
-          (old) => {
-            if (!old) {
-              return {
-                pages: [{ messages: [data.message] }],
-                pageParams: [undefined],
-              };
-            }
-            const pages = [...old.pages];
-            pages[0] = {
-              ...pages[0],
-              messages: [...pages[0].messages, data.message],
-            };
-            return { ...old, pages };
-          }
-        );
-        requestAnimationFrame(() => {
-          lastMessage.current?.scrollIntoView({
-            behavior: 'smooth',
+        if (lastMessage) {
+          socket.emit('conversation:seen', {
+            conversation_id: conversation_id,
+            message_id: lastMessage._id,
           });
-        });
-        socket.emit('conversation:seen', {
-          conversation_id: conversation_id,
-          message_id: data.message._id,
-        });
-      };
-      socket.on('message:new', onNewMessage);
-
-      return () => {
-        socket.emit('conversation:leave', { conversation_id });
-        socket.off('message:new', onNewMessage);
-      };
+        }
+      }
     }
-  }, [socket, conversation_id, queryClient, messages]);
+  }, [socket, conversation_id, messages, userRes?.user._id]);
+
+  // Handle scroll last message
+  useEffect(() => {
+    isFirstLoad.current = true;
+  }, [conversation_id]);
 
   useEffect(() => {
     if (messages.length && isFirstLoad.current) {
@@ -102,8 +76,9 @@ const Direct = () => {
       });
       isFirstLoad.current = false;
     }
-  }, [messages]);
+  }, [messages, conversation_id]);
 
+  // Handle load old messages
   const handleTopReached = async () => {
     if (!hasNextPage || isFetching) return;
     const el = containerRef.current!;
@@ -116,6 +91,7 @@ const Direct = () => {
       el.scrollTop = prevTop + (newHeight - prevHeight);
     });
   };
+
   return (
     <div className='h-dvh flex flex-col min-h-0'>
       <div className='p-4 border-b border-gray-700'>
@@ -124,14 +100,14 @@ const Direct = () => {
             <UserSkeleton />
           ) : (
             <div className='flex items-center  justify-between'>
-              <Link to={`/${data?.direct.user_name}`} className=''>
+              <Link to={`/${data?.direct?.user_name}`} className=''>
                 <div className='mr-2'>
                   <div className=' flex '>
                     <Avatar className=' mr-3 size-[44px]' />
                     <div className='flex flex-col'>
                       <div className=''>
                         <span className='leading-5 line-clamp-1 whitespace-nowrap break-words font-semibold'>
-                          {data?.direct.name}
+                          {data?.direct?.name}
                         </span>
                       </div>
                       <span className='leading-4 font-normal text-[12px] break-words opacity-60'>
@@ -183,6 +159,16 @@ const Direct = () => {
               );
             })}
             <div className='' ref={lastMessage}></div>
+            {/* {typing && (
+              <div className='flex'>
+                <div className='flex items-end'>
+                  <div className='pl-[14px] pr-2'>
+                    <Avatar className='size-[28px]' />
+                  </div>
+                </div>
+                typing...
+              </div>
+            )} */}
           </InfiniteScrollContainer>
         ) : (
           <div className='mt-5'>
@@ -192,17 +178,17 @@ const Direct = () => {
               </div>
               <div className=' text-center'>
                 <span className='leading-6 font-semibold text-xl'>
-                  {data?.direct.name}
+                  {data?.direct?.name}
                 </span>
               </div>
               <div className=''>
                 <span className='leading-[18px] text-sm font-normal opacity-60'>
-                  {data?.direct.user_name}
+                  {data?.direct?.user_name}
                 </span>
               </div>
               <div className='py-6'>
                 <Link
-                  to={`/${data?.direct.user_name}`}
+                  to={`/${data?.direct?.user_name}`}
                   className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
                 >
                   View profile

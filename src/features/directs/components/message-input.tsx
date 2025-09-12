@@ -1,15 +1,47 @@
+import { useGetMe } from '@/features/profile/profile.hooks';
 import EmojiIcon from '@/shared/components/icons/emoji-icon';
 import ImageIcon from '@/shared/components/icons/image-icon';
 import StickerIcon from '@/shared/components/icons/sticker-icon';
 import VoiceIcon from '@/shared/components/icons/voice-icon';
 import { useSocket } from '@/shared/contexts/socket.provider';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const MessageInput = () => {
+  const { data } = useGetMe();
   const socket = useSocket();
   const { conversation_id } = useParams();
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<number | null>(null);
   const [message, setMessage] = useState('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (socket) {
+      const value = e.target.value;
+      setMessage(value);
+
+      if (!isTyping) {
+        socket.emit('conversation:typing', {
+          conversation_id,
+          user_id: data?.user._id,
+        });
+        setIsTyping(true);
+      }
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit('conversation:stop_typing', {
+          conversation_id,
+          user_id: data?.user._id,
+        });
+        setIsTyping(false);
+      }, 2000);
+    }
+  };
+
   const handleSendMessage = () => {
     if (!socket) return;
     socket.emit('message:send', {
@@ -35,7 +67,7 @@ const MessageInput = () => {
                   handleSendMessage();
                 }
               }}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => handleInputChange(e)}
               className='w-full outline-none text-[15px]'
               placeholder='Message...'
             />

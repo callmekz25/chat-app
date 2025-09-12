@@ -2,10 +2,17 @@ import InboxItem from './inbox-item';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { useGetDirects } from '../direct.hooks';
 import { useParams } from 'react-router-dom';
+import { useGetMe } from '@/features/profile/profile.hooks';
 
 const InboxList = () => {
+  const { data } = useGetMe();
   const { conversation_id } = useParams();
-  const { data: directsResponse, isLoading, isError } = useGetDirects();
+  const {
+    data: directsResponse,
+    isLoading,
+    isError,
+  } = useGetDirects(data?.user._id ?? '');
+  console.log(directsResponse);
 
   return (
     <div className=' h-full min-h-0 flex flex-col'>

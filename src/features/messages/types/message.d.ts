@@ -8,4 +8,5 @@ export type Message = {
   conversation_id: string;
   is_seen: boolean;
   seen_by: string[];
+  createdAt: string;
 };
