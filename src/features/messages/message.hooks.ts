@@ -38,7 +38,41 @@ export const useGetInfiniteMessages = (
 
   useEffect(() => {
     if (socket) {
-      const handleUpdated = (data: {
+      const handleUpdatedSeenMessage = (data: {
+        conversation_id: string;
+        message_id: string;
+        user_id: string;
+      }) => {
+        if (data.conversation_id !== conversation_id) return;
+
+        queryClient.setQueryData<InfiniteData<{ messages: Message[] }>>(
+          ['messages', conversation_id],
+          (old) => {
+            if (!old) return old;
+
+            const newPages = old.pages.map((page) => {
+              return {
+                ...page,
+                messages: page.messages.map((m) => {
+                  if (m._id === data.message_id) {
+                    // tránh duplicate
+                    const seenBy = m.seen_by.includes(data.user_id)
+                      ? m.seen_by
+                      : [...m.seen_by, data.user_id];
+
+                    return { ...m, seen_by: seenBy };
+                  }
+                  return m;
+                }),
+              };
+            });
+
+            return { ...old, pages: newPages };
+          }
+        );
+      };
+
+      const handleUpdatedNewMessage = (data: {
         conversation_id: string;
         message: Message;
       }) => {
@@ -62,16 +96,14 @@ export const useGetInfiniteMessages = (
           }
         );
         onNewMessage?.();
-        socket.emit('conversation:seen', {
-          conversation_id: conversation_id,
-          message_id: data.message._id,
-        });
       };
-      socket.on('message:new', handleUpdated);
+      socket.on('message:new', handleUpdatedNewMessage);
+      socket.on('conversation:seen:updated', handleUpdatedSeenMessage);
       return () => {
-        socket.off('message:new', handleUpdated);
+        socket.off('message:new', handleUpdatedNewMessage);
+        socket.off('conversation:seen:updated', handleUpdatedSeenMessage);
       };
     }
-  }, [socket, conversation_id, queryClient]);
+  }, [socket, conversation_id, queryClient, onNewMessage]);
   return query;
 };

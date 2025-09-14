@@ -1,4 +1,3 @@
-import { Link, useParams } from 'react-router-dom';
 import { useGetDirectById } from '../direct.hooks';
 import CallIcon from '@/shared/components/icons/call-icon';
 import CallVideoIcon from '@/shared/components/icons/call-video-icon';
@@ -6,91 +5,37 @@ import InformationIcon from '@/shared/components/icons/information-icon';
 import Avatar from '@/shared/components/ui/avatar';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { Loader2Icon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { useSocket } from '@/shared/contexts/socket.provider';
-import { useGetInfiniteMessages } from '@/features/messages/message.hooks';
 import MessageItem from '@/features/messages/components/message-item';
 import MessageInput from '../components/message-input';
 import InfiniteScrollContainer from '@/shared/infinite-scroll-container';
+import TypingIndicator from '../components/typing-indicator';
+import { Link, useParams } from 'react-router-dom';
+import { useRef } from 'react';
 import { useGetMe } from '@/features/profile/profile.hooks';
-import { Profile } from '@/features/profile/types/profile';
+import useScroll from '../hooks/use-scroll';
+import useTyping from '../hooks/use-typing';
+import useLoadMessages from '../hooks/use-load-messages';
+import useSeenMessage from '../hooks/use-seen-message';
 const Direct = () => {
   const { data: userRes } = useGetMe();
-  const lastMessage = useRef<HTMLDivElement | null>(null);
-  const isFirstLoad = useRef(true);
-  const containerRef = useRef<HTMLDivElement>(null);
   const { conversation_id } = useParams();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { data, isLoading: ild } = useGetDirectById(
+    conversation_id!,
+    userRes?.user._id ?? ''
+  );
 
   const {
-    data,
-    isLoading: ild,
-    isError,
-  } = useGetDirectById(conversation_id!, userRes?.user._id ?? '');
-  const {
-    data: messagesRes,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    containerRef,
+    handleTopReached,
+    messages,
     isLoading,
-    isFetching,
-  } = useGetInfiniteMessages(conversation_id!, () => {
-    requestAnimationFrame(() => {
-      lastMessage.current?.scrollIntoView({
-        behavior: 'smooth',
-      });
-    });
-  });
+    isFetchingNextPage,
+  } = useLoadMessages(conversation_id!, bottomRef);
+  const typingUsers = useTyping(conversation_id);
 
-  const socket = useSocket();
-  const messages = (messagesRes?.pages ?? [])
-    .slice()
-    .reverse()
-    .flatMap((p) => p.messages);
-
-  useEffect(() => {
-    if (socket) {
-      if (messages.length > 0) {
-        const lastMessage = [...messages]
-          .reverse()
-          .find((m) => m.user_id !== userRes?.user._id);
-
-        if (lastMessage) {
-          socket.emit('conversation:seen', {
-            conversation_id: conversation_id,
-            message_id: lastMessage._id,
-          });
-        }
-      }
-    }
-  }, [socket, conversation_id, messages, userRes?.user._id]);
-
-  // Handle scroll last message
-  useEffect(() => {
-    isFirstLoad.current = true;
-  }, [conversation_id]);
-
-  useEffect(() => {
-    if (messages.length && isFirstLoad.current) {
-      requestAnimationFrame(() => {
-        lastMessage.current?.scrollIntoView({ behavior: 'auto' });
-      });
-      isFirstLoad.current = false;
-    }
-  }, [messages, conversation_id]);
-
-  // Handle load old messages
-  const handleTopReached = async () => {
-    if (!hasNextPage || isFetching) return;
-    const el = containerRef.current!;
-    const prevHeight = el.scrollHeight;
-    const prevTop = el.scrollTop;
-
-    await fetchNextPage();
-    requestAnimationFrame(() => {
-      const newHeight = el.scrollHeight;
-      el.scrollTop = prevTop + (newHeight - prevHeight);
-    });
-  };
+  useSeenMessage({ messages, conversation_id });
+  useScroll({ bottomRef, conversation_id, messages, typingUsers });
 
   return (
     <div className='h-dvh flex flex-col min-h-0'>
@@ -158,17 +103,8 @@ const Direct = () => {
                 </div>
               );
             })}
-            <div className='' ref={lastMessage}></div>
-            {/* {typing && (
-              <div className='flex'>
-                <div className='flex items-end'>
-                  <div className='pl-[14px] pr-2'>
-                    <Avatar className='size-[28px]' />
-                  </div>
-                </div>
-                typing...
-              </div>
-            )} */}
+            <TypingIndicator typingUsers={typingUsers} />
+            <div className='' ref={bottomRef}></div>
           </InfiniteScrollContainer>
         ) : (
           <div className='mt-5'>

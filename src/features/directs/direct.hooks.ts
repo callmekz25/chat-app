@@ -38,8 +38,6 @@ export const useGetDirects = (user_id: string) => {
       queryClient.setQueryData<{ directs: FormattedDirect[] }>(
         ['directs'],
         (old) => {
-          console.log(old);
-
           if (!old) return { directs: [formatted] };
 
           const directs = old.directs ?? [];

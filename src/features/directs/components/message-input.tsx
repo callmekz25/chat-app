@@ -38,7 +38,7 @@ const MessageInput = () => {
           user_id: data?.user._id,
         });
         setIsTyping(false);
-      }, 2000);
+      }, 5000);
     }
   };
 
