@@ -18,18 +18,14 @@ const useSeenMessage = ({ messages, conversation_id }: Props) => {
         .reverse()
         .find((m) => m.user_id !== data!.user._id);
 
-      if (newMessage) {
-        socket.emit('conversation:seen', {
+      if (newMessage && !newMessage.seen_by.includes(data.user._id)) {
+        socket.emit('message:seen', {
           conversation_id: conversation_id,
           message_id: newMessage._id,
         });
       }
     }
-    return () => {
-      socket.off('conversation:seen');
-    };
   }, [socket, conversation_id, messages, data]);
-  return;
 };
 
 export default useSeenMessage;
