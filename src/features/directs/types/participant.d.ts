@@ -7,5 +7,5 @@ export type Participant = {
 
   joined_at: string;
 
-  last_read_at?: string;
+  last_seen_message?: string;
 };
