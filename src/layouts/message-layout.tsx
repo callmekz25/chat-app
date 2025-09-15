@@ -1,11 +1,13 @@
 import InboxList from '@/features/directs/components/inbox-list';
 import NewInbox from '@/features/directs/components/new-inbox';
 import SearchUsers from '@/features/directs/components/search-users';
+import { useSocketMessageEvents } from '@/features/messages/hooks/use-socket-message-events';
 import Avatar from '@/shared/components/ui/avatar';
 import BubbleNote from '@/shared/components/ui/bubble-note';
 import { Outlet } from 'react-router-dom';
 
 const MessageLayout = () => {
+  useSocketMessageEvents();
   return (
     <div className='flex h-dvh overflow-hidden'>
       <aside className='h-dvh max-w-[398px] shrink-0 w-[398px] flex flex-col min-w-[398px] border-r border-gray-700'>

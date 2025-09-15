@@ -1,10 +1,8 @@
-import { useGetInfiniteMessages } from '@/features/messages/message.hooks';
-import { RefObject, useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { getMessagesByConversationId } from '../message.services';
+import { useRef } from 'react';
 
-const useLoadMessages = (
-  conversation_id: string | undefined,
-  bottomRef: RefObject<HTMLDivElement | null>
-) => {
+export const useGetMessages = (conversation_id: string) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const {
     data: messagesRes,
@@ -13,12 +11,18 @@ const useLoadMessages = (
     isFetchingNextPage,
     isLoading,
     isFetching,
-  } = useGetInfiniteMessages(conversation_id!, () => {
-    requestAnimationFrame(() => {
-      bottomRef.current?.scrollIntoView({
-        behavior: 'smooth',
-      });
-    });
+  } = useInfiniteQuery({
+    queryKey: ['messages', conversation_id],
+    enabled: !!conversation_id,
+    queryFn: ({ pageParam }) => {
+      return getMessagesByConversationId(
+        conversation_id,
+        pageParam as string | undefined
+      );
+    },
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => lastPage?.nextCursor ?? undefined,
+    refetchOnWindowFocus: false,
   });
   const messages = (messagesRes?.pages ?? [])
     .slice()
@@ -49,5 +53,3 @@ const useLoadMessages = (
     handleTopReached,
   };
 };
-
-export default useLoadMessages;
