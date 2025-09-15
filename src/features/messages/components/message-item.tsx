@@ -1,9 +1,17 @@
 import { useGetMe } from '@/features/profile/profile.hooks';
 import { Message } from '../types/message';
 import Avatar from '@/shared/components/ui/avatar';
+import { getLastSeenMessageId } from '../utils/get-last-seen-message-id';
 
-const MessageItem = ({ message }: { message: Message }) => {
+const MessageItem = ({
+  message,
+  messages,
+}: {
+  message: Message;
+  messages: Message[];
+}) => {
   const { data } = useGetMe();
+  const lastSeenMessageId = getLastSeenMessageId(messages, data!.user._id);
   return (
     <div className='flex'>
       {data?.user._id !== message.user_id && (
@@ -30,8 +38,9 @@ const MessageItem = ({ message }: { message: Message }) => {
             {message.message}
           </span>
         </div>
-        {message?.seen_by && message.seen_by.length > 0 && (
-          <div className=' px-3'>
+
+        {message._id === lastSeenMessageId && (
+          <div className='px-3'>
             <span className='text-[12px] opacity-80 leading-4'>Seen</span>
           </div>
         )}
