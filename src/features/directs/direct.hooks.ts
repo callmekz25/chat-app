@@ -7,9 +7,8 @@ import {
 import { CreateDirect } from './types/create-direct';
 import { useSocket } from '@/shared/contexts/socket.provider';
 import { useEffect } from 'react';
-import { Direct, FormattedDirect } from './types/direct';
-import { useGetMe } from '../profile/profile.hooks';
-import { formatDirect } from './utils/format-direct';
+import { Direct } from './types/direct';
+import { Profile } from '../profile/types/profile';
 
 export const useGetOrCreateDirect = () => {
   return useMutation({
@@ -17,62 +16,75 @@ export const useGetOrCreateDirect = () => {
   });
 };
 
-export const useGetDirects = (user_id: string) => {
+export const useGetDirects = () => {
   const queryClient = useQueryClient();
   const socket = useSocket();
   const query = useQuery({
     queryKey: ['directs'],
     queryFn: getDirects,
-    enabled: !!user_id,
-    select: (data: { directs: Direct[] }) => ({
-      directs: (data.directs ?? []).map((c) => formatDirect(c, user_id)),
-    }),
   });
 
   useEffect(() => {
     if (!socket) return;
 
-    const handleUpdated = (direct: Direct) => {
-      const formatted = formatDirect(direct, user_id);
+    const handleDirectSeenUpdated = (payload: {
+      conversation_id: string;
+      message_id: string;
+      user_id: string;
+    }) => {
+      queryClient.setQueryData<{ directs: Direct[] }>(['directs'], (old) => {
+        if (!old) return old;
+        return {
+          directs: old.directs.map((direct) => {
+            if (direct._id !== payload.conversation_id) return direct;
+            return {
+              ...direct,
+              participants: direct.participants.map((p) =>
+                (p.user as Profile)._id === payload.user_id
+                  ? { ...p, last_seen_message: payload.message_id }
+                  : p
+              ),
+            };
+          }),
+        };
+      });
+    };
 
-      queryClient.setQueryData<{ directs: FormattedDirect[] }>(
-        ['directs'],
-        (old) => {
-          if (!old) return { directs: [formatted] };
+    const handlePositionDirectsUpdated = (direct: Direct) => {
+      queryClient.setQueryData<{ directs: Direct[] }>(['directs'], (old) => {
+        if (!old) return { directs: [direct] };
 
-          const directs = old.directs ?? [];
-          const index = directs.findIndex((c) => c._id === formatted._id);
+        const directs = old.directs ?? [];
+        const index = directs.findIndex((c) => c._id === direct._id);
 
-          let newList: FormattedDirect[];
-          if (index !== -1) {
-            newList = [...directs];
-            newList[index] = formatted;
-            newList = [formatted, ...newList.filter((_, i) => i !== index)];
-          } else {
-            newList = [formatted, ...directs];
-          }
-
-          return { directs: newList };
+        let newList: Direct[];
+        if (index !== -1) {
+          newList = [...directs];
+          newList[index] = direct;
+          newList = [direct, ...newList.filter((_, i) => i !== index)];
+        } else {
+          newList = [direct, ...directs];
         }
-      );
+
+        return { directs: newList };
+      });
     };
 
-    socket.on('conversation:updated', handleUpdated);
+    socket.on('conversation:updated', handlePositionDirectsUpdated);
+    socket.on('message:seen:updated', handleDirectSeenUpdated);
     return () => {
-      socket.off('conversation:updated', handleUpdated);
+      socket.off('conversation:updated', handlePositionDirectsUpdated);
+      socket.off('message:seen:updated', handleDirectSeenUpdated);
     };
-  }, [socket, queryClient, user_id]);
+  }, [socket, queryClient]);
 
   return query;
 };
 
-export const useGetDirectById = (id: string, user_id: string) => {
+export const useGetDirectById = (id: string) => {
   return useQuery({
     queryKey: ['direct', id],
     queryFn: () => getDirectById(id),
-    enabled: !!id && !!user_id,
-    select: (data: { direct: Direct }) => ({
-      direct: formatDirect(data.direct, user_id),
-    }),
+    enabled: !!id,
   });
 };

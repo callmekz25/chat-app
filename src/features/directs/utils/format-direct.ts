@@ -3,8 +3,11 @@ import { Direct } from '../types/direct';
 import { Participant } from '../types/participant';
 import { Profile } from '@/features/profile/types/profile';
 
-export function formatDirect(c: Direct | undefined, user_id: string) {
-  if (!c || !c.participants) {
+export function formatDirect(
+  c: Direct | undefined,
+  user_id: string | undefined
+) {
+  if (!c || !c.participants || !user_id) {
     return {
       _id: c?._id ?? '',
       type: c?.type ?? 'direct',
@@ -25,8 +28,7 @@ export function formatDirect(c: Direct | undefined, user_id: string) {
   const isSeen =
     !!lastMessage &&
     (lastMessage.user_id === user_id ||
-      (!!currentUser?.last_read_at &&
-        new Date(lastMessage.createdAt) <= new Date(currentUser.last_read_at)));
+      lastMessage._id === currentUser?.last_seen_message);
 
   if (c.type === 'group') {
     return {

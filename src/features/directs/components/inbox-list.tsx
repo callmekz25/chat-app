@@ -3,16 +3,16 @@ import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { useGetDirects } from '../direct.hooks';
 import { useParams } from 'react-router-dom';
 import { useGetMe } from '@/features/profile/profile.hooks';
+import { formatDirect } from '../utils/format-direct';
+import { Direct } from '../types/direct';
 
 const InboxList = () => {
   const { data } = useGetMe();
   const { conversation_id } = useParams();
-  const {
-    data: directsResponse,
-    isLoading,
-    isError,
-  } = useGetDirects(data?.user._id ?? '');
-  console.log(directsResponse);
+  const { data: directsResponse, isLoading } = useGetDirects();
+  const directs = directsResponse?.directs.map((d: Direct) =>
+    formatDirect(d, data?.user._id)
+  );
 
   return (
     <div className=' h-full min-h-0 flex flex-col'>
@@ -26,8 +26,8 @@ const InboxList = () => {
               return <UserSkeleton key={i} />;
             }),
           ]
-        ) : directsResponse?.directs && directsResponse.directs.length > 0 ? (
-          directsResponse.directs.map((item) => {
+        ) : directs && directs.length > 0 ? (
+          directs.map((item) => {
             return (
               <InboxItem
                 key={item._id}
