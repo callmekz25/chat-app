@@ -38,7 +38,7 @@ const MessageInput = () => {
           user_id: data?.user._id,
         });
         setIsTyping(false);
-      }, 5000);
+      }, 3000);
     }
   };
 
@@ -48,6 +48,11 @@ const MessageInput = () => {
       conversation_id: conversation_id,
       message: message,
     });
+    socket.emit('conversation:stop_typing', {
+      conversation_id,
+      user_id: data?.user._id,
+    });
+    setIsTyping(false);
     setMessage('');
   };
   return (
