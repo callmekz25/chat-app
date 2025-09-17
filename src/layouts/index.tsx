@@ -1,13 +1,16 @@
 import Logo from '@/assets/logo.png';
 import { useGetMe } from '@/features/profile/profile.hooks';
-import { getMenu } from '@/shared/constants';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import Avatar from '@/shared/components/ui/avatar';
-import React from 'react';
+
+import { Outlet, useLocation } from 'react-router-dom';
+import MenuItem from '@/shared/components/ui/menu-item';
+import { useState } from 'react';
+import CreatePostModal from '@/features/create-post/components/create-post.modal';
+import { getMenu } from '@/shared/constants/menu';
 const Layout = () => {
   const { data } = useGetMe();
   const menu = getMenu(data?.user.user_name ?? '');
   const { pathname } = useLocation();
+  const [openModal, setOpenModal] = useState('');
 
   return (
     <div className='flex'>
@@ -17,31 +20,20 @@ const Layout = () => {
         </div>
         <ul className='flex flex-col h-full'>
           {menu.map((item) => {
-            const isActive =
-              item.url === '/'
-                ? pathname === '/'
-                : pathname.startsWith(item.url);
+            const isActive = item.exact
+              ? pathname === item.url
+              : pathname.startsWith(item.url ?? '');
+
             return (
               <li
-                key={item.title}
-                className={`${item.title === 'More' ? 'mt-auto' : ''}`}
+                key={item.id}
+                className={`${item.id === 'more' ? 'mt-auto' : ''}`}
               >
-                <Link
-                  to={item.url}
-                  className='flex p-3 w-full hover:bg-[#262626] transition-all duration-200 rounded-lg my-1 font-normal text-[16px] items-center'
-                >
-                  {item.title === 'Profile' ? (
-                    <Avatar className='size-6' />
-                  ) : (
-                    item.icon &&
-                    React.cloneElement(item.icon as React.ReactElement, {
-                      fill: isActive,
-                    })
-                  )}
-                  <span className={`pl-4 ${isActive ? ' font-bold' : ''}`}>
-                    {item.title}
-                  </span>
-                </Link>
+                <MenuItem
+                  item={item}
+                  isActive={isActive}
+                  onOpenModal={setOpenModal}
+                />
               </li>
             );
           })}
@@ -50,6 +42,12 @@ const Layout = () => {
       <main className='w-full flex-1'>
         <Outlet />
       </main>
+      {openModal === 'create' && (
+        <CreatePostModal
+          open={openModal === 'create'}
+          onClose={() => setOpenModal('')}
+        />
+      )}
     </div>
   );
 };

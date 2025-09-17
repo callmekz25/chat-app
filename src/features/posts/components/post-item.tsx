@@ -39,10 +39,10 @@ const PostItem = () => {
         <Swiper
           modules={[Pagination]}
           className='w-full [--swiper-pagination-color:#ffffff]              
-    [--swiper-pagination-bullet-inactive-color:rgb(156,163,175)] 
-    [--swiper-pagination-bullet-inactive-opacity:0.7]
-    [--swiper-pagination-bullet-size:6px]
-    [--swiper-pagination-bullet-horizontal-gap:6px]'
+        [--swiper-pagination-bullet-inactive-color:rgb(156,163,175)] 
+        [--swiper-pagination-bullet-inactive-opacity:0.7]
+        [--swiper-pagination-bullet-size:6px]
+        [--swiper-pagination-bullet-horizontal-gap:6px]'
           pagination={{ clickable: true }}
           spaceBetween={50}
           slidesPerView={1}
