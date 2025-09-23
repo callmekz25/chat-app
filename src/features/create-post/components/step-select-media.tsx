@@ -1,5 +1,5 @@
 import PhotosVideosIcon from '@/shared/components/icons/photos-videos-icon';
-import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Pagination } from 'swiper/modules';
@@ -31,9 +31,9 @@ const StepSelectMedia = ({
   }, [files, setStep]);
 
   return (
-    <div className=' lg:size-[781px] size-[473px]'>
+    <div className=' lg:size-[781px] size-[473px] '>
       <div
-        className={` flex  flex-col items-center w-full h-full justify-center bg-[#262626] ${
+        className={` flex  flex-col items-center w-full h-full rounded-bl-3xl rounded-br-3xl justify-center bg-[#262626] ${
           urls.length > 0 ? 'p-0' : 'p-6'
         }`}
       >

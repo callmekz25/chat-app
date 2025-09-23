@@ -45,10 +45,10 @@ const CreatePostModal = ({
       <div className='flex flex-col'>
         <div className='m-5'>
           <div className=' rounded-3xl overflow-hidden max-h-[898px]   min-w-[348px] min-h-[391px]  flex flex-col transition-all duration-500 '>
-            <div className='bg-black py-1  flex items-center justify-between'>
+            <div className='bg-black py-2  flex items-center justify-between'>
               <div className=''>
                 {step !== 'select' && (
-                  <div className='p-2' onClick={() => handleBack()}>
+                  <div className='p-1' onClick={() => handleBack()}>
                     <ArrowLeftIcon className='size-6' />
                   </div>
                 )}
@@ -60,7 +60,7 @@ const CreatePostModal = ({
               </span>
               <div className=''>
                 {step !== 'select' && (
-                  <div className='p-2' onClick={() => handleNext()}>
+                  <div className='p-1' onClick={() => handleNext()}>
                     <span className='  text-[#85a1ff] text-sm font-semibold'>
                       Next
                     </span>
