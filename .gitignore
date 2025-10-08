@@ -25,3 +25,8 @@ dist-ssr
 
 .env
 .env.* 
+
+# ignore pnpm cache folders
+.pnpm-store/
+node_modules/.pnpm/
+node_modules/.pnpm-store/
