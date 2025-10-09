@@ -8,21 +8,20 @@ export type Direct = {
   participants: Participant[];
   avatar?: {
     url: string;
-    public_id: string;
+    publicId: string;
   };
-  last_message?: string | Message;
-  last_message_at?: string;
+  lastMessage?: Message;
 };
 
 export type FormattedDirect = {
   _id: string;
   name: string;
   type: 'group' | 'direct';
-  user_name?: string;
+  userName?: string;
   avatar?: {
     url: string;
-    public_id: string;
+    publicId: string;
   };
-  last_message: Message;
-  last_message_at?: string;
+  participants: Participant[];
+  lastMessage: Message;
 };

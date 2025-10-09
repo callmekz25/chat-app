@@ -22,7 +22,7 @@ const router = createBrowserRouter([
           },
           {
             element: <Profile />,
-            path: '/:user_name',
+            path: '/:userName',
           },
           {
             element: <MessageLayout />,
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
               },
               {
                 element: <Direct />,
-                path: '/direct/t/:conversation_id',
+                path: '/direct/t/:conversationId',
               },
             ],
           },

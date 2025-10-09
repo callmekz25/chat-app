@@ -2,7 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { getMessagesByConversationId } from '../message.services';
 import { useRef } from 'react';
 
-export const useGetMessages = (conversation_id: string) => {
+export const useGetMessages = (conversationId: string) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const {
     data: messagesRes,
@@ -12,11 +12,11 @@ export const useGetMessages = (conversation_id: string) => {
     isLoading,
     isFetching,
   } = useInfiniteQuery({
-    queryKey: ['messages', conversation_id],
-    enabled: !!conversation_id,
+    queryKey: ['messages', conversationId],
+    enabled: !!conversationId,
     queryFn: ({ pageParam }) => {
       return getMessagesByConversationId(
-        conversation_id,
+        conversationId,
         pageParam as string | undefined
       );
     },

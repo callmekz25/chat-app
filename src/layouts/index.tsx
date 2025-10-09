@@ -8,7 +8,7 @@ import CreatePostModal from '@/features/create-post/components/create-post.modal
 import { getMenu } from '@/shared/constants/menu';
 const Layout = () => {
   const { data } = useGetMe();
-  const menu = getMenu(data?.user.user_name ?? '');
+  const menu = getMenu(data?.user.userName ?? '');
   const { pathname } = useLocation();
   const [openModal, setOpenModal] = useState('');
 

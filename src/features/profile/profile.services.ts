@@ -1,18 +1,18 @@
 import httpRequest from '@/config/axios.config';
 import { ApiResponse } from '@/types/api';
-import { Profile } from './types/profile';
+import { User } from '../user/types/user';
 import { Relations } from './types/relations';
 import { Note } from './types/note';
 
 export const getProfile = async (user_name: string) => {
   const { data } = await httpRequest.get<
-    ApiResponse<{ user: Profile; relations: Relations; note: Note }>
+    ApiResponse<{ user: User; relations: Relations; note: Note }>
   >(`/profile/${user_name}`);
   return data;
 };
 
 export const getMe = async () => {
-  const { data } = await httpRequest.get<ApiResponse<{ user: Profile }>>(
+  const { data } = await httpRequest.get<ApiResponse<{ user: User }>>(
     '/profile/me'
   );
   return data;

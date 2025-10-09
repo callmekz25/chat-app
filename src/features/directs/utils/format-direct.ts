@@ -1,34 +1,31 @@
 import { Message } from '@/features/messages/types/message';
 import { Direct } from '../types/direct';
 import { Participant } from '../types/participant';
-import { Profile } from '@/features/profile/types/profile';
+import { User } from '@/features/user/types/user';
 
 export function formatDirect(
   c: Direct | undefined,
-  user_id: string | undefined
+  userId: string | undefined
 ) {
-  if (!c || !c.participants || !user_id) {
+  if (!c || !c.participants || !userId) {
     return {
       _id: c?._id ?? '',
       type: c?.type ?? 'direct',
       name: c?.name ?? 'Unknown',
-      user_name: undefined,
+      userName: undefined,
       participants: [],
       avatar: c?.avatar,
-      last_message_at: c?.last_message_at,
-      last_message: (c?.last_message as Message) ?? ({} as Message),
+      lastMessage: c?.lastMessage,
     };
   }
 
-  const currentUser = c.participants.find(
-    (p) => (p.user as Profile)._id === user_id
-  );
-  const lastMessage = c.last_message as Message;
+  const currentUser = c.participants.find((p) => p.user._id === userId);
+  const lastMessage = c.lastMessage;
 
   const isSeen =
     !!lastMessage &&
-    (lastMessage.user_id === user_id ||
-      lastMessage._id === currentUser?.last_seen_message);
+    (lastMessage.userId === userId ||
+      lastMessage._id === currentUser?.lastSeenMessage);
 
   if (c.type === 'group') {
     return {
@@ -36,28 +33,18 @@ export function formatDirect(
       type: c.type,
       name: c.name!,
       avatar: c.avatar,
-      last_message_at: c.last_message_at,
-      last_message: lastMessage
-        ? { ...lastMessage, is_seen: isSeen }
-        : ({} as Message),
+      lastMessage: lastMessage ? { ...lastMessage, isSeen } : null,
     };
   }
 
-  const other = c.participants.find(
-    (p: Participant) => (p.user as Profile)._id !== user_id
-  );
+  const other = c.participants.find((p: Participant) => p.user._id !== userId);
   return {
     _id: c._id,
     type: c.type,
-    name: (other?.user as Profile).full_name,
-    user_name: (other?.user as Profile).user_name,
-    avatar: {
-      url: (other?.user as Profile).avatar_url ?? '',
-      public_id: (other?.user as Profile).avatar_public_id ?? '',
-    },
-    last_message_at: c.last_message_at,
-    last_message: lastMessage
-      ? { ...lastMessage, is_seen: isSeen }
-      : ({} as Message),
+    name: other?.user.fullName,
+    userName: other?.user.userName,
+    avatar: other?.user.avatar,
+    participants: c.participants,
+    lastMessage: lastMessage ? { ...lastMessage, isSeen } : null,
   };
 }

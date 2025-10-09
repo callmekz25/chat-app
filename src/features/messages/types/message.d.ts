@@ -1,12 +1,13 @@
 export type Message = {
   _id: string;
-  user_id: string;
-  message_type: string;
-  is_deleted: boolean;
-  is_edited: boolean;
+  userId: string;
+  messageType: string;
+  isDeleted: boolean;
+  isEdited: boolean;
   message: string;
-  conversation_id: string;
-  is_seen: boolean;
-  seen_by: string[];
+  conversationId: string;
+  isSeen: boolean;
+  seenBy: string[];
   createdAt: string;
+  replyMessageId?: string | Message;
 };

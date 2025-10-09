@@ -3,13 +3,13 @@ import { ApiResponse } from '@/types/api';
 import { Message } from './types/message';
 
 export const getMessagesByConversationId = async (
-  conversation_id: string,
+  conversationId: string,
   cursor?: string,
   limit: number = 20
 ) => {
   const { data } = await httpRequest.get<
     ApiResponse<{ messages: Message[]; nextCursor: string }>
-  >(`/messages/${conversation_id}`, {
+  >(`/messages/${conversationId}`, {
     params: {
       before: cursor,
       limit: Number(limit),

@@ -8,7 +8,7 @@ export const register = async (payload: RegisterPayLoad) => {
 };
 
 export const login = async (payload: LoginPayload) => {
-  return await httpRequest.post<ApiResponse<{ access_token: string }>>(
+  return await httpRequest.post<ApiResponse<{ accessToken: string }>>(
     '/auth/login',
     payload
   );

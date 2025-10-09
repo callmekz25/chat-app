@@ -6,23 +6,27 @@ import Avatar from '@/shared/components/ui/avatar';
 import UserSkeleton from '@/shared/components/loading/user-skeleton';
 import { Loader2Icon } from 'lucide-react';
 import MessageItem from '@/features/messages/components/message-item';
-import MessageInput from '../components/message-input';
+import MessageInput from '../../messages/components/message-input';
 import InfiniteScrollContainer from '@/shared/infinite-scroll-container';
 import TypingIndicator from '../components/typing-indicator';
 import { Link, useParams } from 'react-router-dom';
-import { useRef } from 'react';
+import React from 'react';
 import { useGetMe } from '@/features/profile/profile.hooks';
 import useScroll from '../hooks/use-scroll';
 import useTyping from '../hooks/use-typing';
 import useSeenMessage from '../hooks/use-seen-message';
 import { formatDirect } from '../utils/format-direct';
 import { useGetMessages } from '@/features/messages/hooks/use-get-messages';
+import { MessageAction } from '@/features/messages/types/message-action';
+import { Message } from '@/features/messages/types/message';
 
 const Direct = () => {
   const { data: userRes } = useGetMe();
-  const { conversation_id } = useParams();
-  const bottomRef = useRef<HTMLDivElement | null>(null);
-  const { data, isLoading: ild } = useGetDirectById(conversation_id!);
+  const [messageAction, setMessageAction] =
+    React.useState<MessageAction | null>(null);
+  const { conversationId } = useParams();
+  const bottomRef = React.useRef<HTMLDivElement | null>(null);
+  const { data, isLoading: ild } = useGetDirectById(conversationId!);
   const direct = formatDirect(data?.direct, userRes?.user._id);
   const {
     containerRef,
@@ -30,11 +34,19 @@ const Direct = () => {
     messages,
     isLoading,
     isFetchingNextPage,
-  } = useGetMessages(conversation_id!);
-  const typingUsers = useTyping(conversation_id);
+  } = useGetMessages(conversationId!);
+  const typingUsers = useTyping(conversationId);
 
-  useSeenMessage({ messages, conversation_id });
-  useScroll({ bottomRef, conversation_id, messages, typingUsers });
+  const participants = direct.participants ?? [];
+
+  useSeenMessage({ messages, conversationId });
+  useScroll({
+    bottomRef,
+    conversationId,
+    messages,
+    typingUsers,
+    messageAction,
+  });
 
   return (
     <div className='h-dvh flex flex-col min-h-0'>
@@ -44,7 +56,7 @@ const Direct = () => {
             <UserSkeleton />
           ) : (
             <div className='flex items-center  justify-between'>
-              <Link to={`/${direct?.user_name}`} className=''>
+              <Link to={`/${direct?.userName}`} className=''>
                 <div className='mr-2'>
                   <div className=' flex '>
                     <Avatar className=' mr-3 size-[44px]' />
@@ -55,7 +67,7 @@ const Direct = () => {
                         </span>
                       </div>
                       <span className='leading-4 font-normal text-[12px] break-words opacity-60'>
-                        {direct?.user_name}
+                        {direct?.userName}
                       </span>
                     </div>
                   </div>
@@ -91,17 +103,20 @@ const Direct = () => {
                 <Loader2Icon className=' animate-spin size-8 text-gray-400' />
               </div>
             )}
-            {messages.map((m, index) => {
+            {messages.map((m: Message, index) => {
               const prevMessage = messages[index - 1];
-              const isSameUser =
-                prevMessage && prevMessage.user_id === m.user_id;
+              const isSameUser = prevMessage && prevMessage.userId === m.userId;
 
               return (
                 <div
                   key={m._id}
                   className={`${isSameUser ? 'mt-1' : 'mt-[17px]'}`}
                 >
-                  <MessageItem message={m} messages={messages} />
+                  <MessageItem
+                    message={m}
+                    messages={messages}
+                    onMessageAction={setMessageAction}
+                  />
                 </div>
               );
             })}
@@ -121,12 +136,12 @@ const Direct = () => {
               </div>
               <div className=''>
                 <span className='leading-[18px] text-sm font-normal opacity-60'>
-                  {direct?.user_name}
+                  {direct?.userName}
                 </span>
               </div>
               <div className='py-6'>
                 <Link
-                  to={`/${direct?.user_name}`}
+                  to={`/${direct?.userName}`}
                   className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
                 >
                   View profile
@@ -136,7 +151,13 @@ const Direct = () => {
           </div>
         )}
       </main>
-      <MessageInput />
+      <MessageInput
+        messageReply={
+          messageAction?.action === 'REPLY' ? messageAction.message : null
+        }
+        participants={participants}
+        onMessageAction={setMessageAction}
+      />
     </div>
   );
 };

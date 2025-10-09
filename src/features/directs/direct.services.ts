@@ -5,7 +5,7 @@ import { CreateDirect } from './types/create-direct';
 
 export const getOrCreateDirect = async (payload: CreateDirect) => {
   const { data } = await httpRequest.post<
-    ApiResponse<{ conversation_id: string }>
+    ApiResponse<{ conversationId: string }>
   >('conversations', payload);
   return data;
 };

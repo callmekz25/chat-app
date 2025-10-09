@@ -7,15 +7,17 @@ export enum Role {
   LEADER = 'leader',
   ADMIN = 'admin',
 }
-export type Profile = {
+export type User = {
   _id: string;
-  user_name: string;
-  full_name: string;
-  avatar_url?: string;
-  avatar_public_id?: string;
+  userName: string;
+  fullName: string;
+  avatar?: {
+    avatarUrl: string;
+    avatarPublicId: string;
+  };
   roles: Role[];
   bio?: string;
   gender: Gender;
-  total_followers: number;
-  total_followings: number;
+  totalFollowers: number;
+  totalFollowings: number;
 };

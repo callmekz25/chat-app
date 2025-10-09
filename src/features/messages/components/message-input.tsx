@@ -6,14 +6,29 @@ import VoiceIcon from '@/shared/components/icons/voice-icon';
 import { useSocket } from '@/shared/contexts/socket.provider';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Message } from '@/features/messages/types/message';
+import { XIcon } from 'lucide-react';
+import { MessageAction } from '@/features/messages/types/message-action';
+import { Participant } from '@/features/directs/types/participant';
+import { User } from '@/features/user/types/user';
 
-const MessageInput = () => {
+const MessageInput = ({
+  messageReply,
+  onMessageAction,
+  participants,
+}: {
+  messageReply: Message | null;
+  participants: Participant[] | [];
+  onMessageAction: (value: MessageAction | null) => void;
+}) => {
   const { data } = useGetMe();
   const socket = useSocket();
-  const { conversation_id } = useParams();
+  const { conversationId } = useParams();
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef<number | null>(null);
   const [message, setMessage] = useState('');
+
+  const userId = data?.user?._id;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (socket) {
@@ -22,8 +37,8 @@ const MessageInput = () => {
 
       if (!isTyping) {
         socket.emit('conversation:typing', {
-          conversation_id,
-          user_id: data?.user._id,
+          conversationId,
+          userId,
         });
         setIsTyping(true);
       }
@@ -34,8 +49,8 @@ const MessageInput = () => {
 
       typingTimeoutRef.current = setTimeout(() => {
         socket.emit('conversation:stop_typing', {
-          conversation_id,
-          user_id: data?.user._id,
+          conversationId,
+          userId,
         });
         setIsTyping(false);
       }, 3000);
@@ -45,18 +60,37 @@ const MessageInput = () => {
   const handleSendMessage = () => {
     if (!socket) return;
     socket.emit('message:send', {
-      conversation_id: conversation_id,
-      message: message,
+      conversationId,
+      message,
+      replyMessageId: messageReply?._id ?? null,
     });
-    socket.emit('conversation:stop_typing', {
-      conversation_id,
-      user_id: data?.user._id,
+    socket.emit('conversation:stopTyping', {
+      conversationId,
+      userId,
     });
     setIsTyping(false);
     setMessage('');
   };
+  const userOfMessageReply =
+    participants &&
+    participants.find((p) => (p.user as User)._id === messageReply?.userId)
+      ?.user;
   return (
-    <div className=''>
+    <div className={messageReply ? 'border-t border-gray-800' : ''}>
+      {messageReply && (
+        <div className='pt-[10px] pb-[3px] px-[15px]'>
+          <div className='flex items-center justify-between'>
+            <p className='text-sm'>
+              Replying to{' '}
+              <span className='font-semibold'>
+                {userOfMessageReply?.fullName}
+              </span>
+            </p>
+            <XIcon className='size-5' onClick={() => onMessageAction(null)} />
+          </div>
+          <p className='text-[13px] opacity-70'>{messageReply.message}</p>
+        </div>
+      )}
       <div className='m-4'>
         <div className='min-h-[44px] pr-4 pl-[11px] rounded-full border border-gray-700 flex items-center'>
           <div className='p-1'>

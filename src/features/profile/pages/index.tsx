@@ -20,8 +20,8 @@ type ModalType =
   | 'followings';
 
 const Profile = () => {
-  const { user_name } = useParams();
-  const { data, isLoading } = useGetProfile(user_name!);
+  const { userName } = useParams();
+  const { data, isLoading } = useGetProfile(userName!);
   const user = data?.user;
   const relations = data?.relations;
   const note = data?.note;
@@ -72,7 +72,7 @@ const Profile = () => {
                 <div className='flex items-center'>
                   <div className='mr-4'>
                     <Link to={``} className='text-xl font-normal'>
-                      {user?.user_name}
+                      {user?.userName}
                     </Link>
                   </div>
                   {isMe ? (
@@ -96,7 +96,7 @@ const Profile = () => {
                   >
                     <div className='flex items-center gap-1 font-normal'>
                       <span className=' font-semibold'>
-                        {user?.total_followers}
+                        {user?.totalFollowers}
                       </span>
                       <span className=' opacity-60'>followers</span>
                     </div>
@@ -107,7 +107,7 @@ const Profile = () => {
                   >
                     <div className='flex items-center gap-1 font-normal'>
                       <span className=' font-semibold'>
-                        {user?.total_followings}
+                        {user?.totalFollowings}
                       </span>
                       <span className=' opacity-60'>following</span>
                     </div>

@@ -10,12 +10,12 @@ export const useSocketMessageEvents = () => {
   useEffect(() => {
     if (socket) {
       const handleUpdatedSeenMessage = (data: {
-        conversation_id: string;
-        message_id: string;
-        user_id: string;
+        conversationId: string;
+        messageId: string;
+        userId: string;
       }) => {
         queryClient.setQueryData<InfiniteData<{ messages: Message[] }>>(
-          ['messages', data.conversation_id],
+          ['messages', data.conversationId],
           (old) => {
             if (!old) return old;
 
@@ -23,12 +23,12 @@ export const useSocketMessageEvents = () => {
               return {
                 ...page,
                 messages: page.messages.map((m) => {
-                  if (m._id === data.message_id) {
-                    const seenBy = m.seen_by.includes(data.user_id)
-                      ? m.seen_by
-                      : [...m.seen_by, data.user_id];
+                  if (m._id === data.messageId) {
+                    const seenBy = m.seenBy.includes(data.userId)
+                      ? m.seenBy
+                      : [...m.seenBy, data.userId];
 
-                    return { ...m, seen_by: seenBy };
+                    return { ...m, seenBy: seenBy };
                   }
                   return m;
                 }),
@@ -42,11 +42,11 @@ export const useSocketMessageEvents = () => {
       };
 
       const handleUpdatedNewMessage = (data: {
-        conversation_id: string;
+        conversationId: string;
         message: Message;
       }) => {
         queryClient.setQueryData<InfiniteData<{ messages: Message[] }>>(
-          ['messages', data.conversation_id],
+          ['messages', data.conversationId],
           (old) => {
             if (!old) {
               return {

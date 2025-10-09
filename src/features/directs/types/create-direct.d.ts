@@ -1,4 +1,4 @@
 export type CreateDirect = {
-  other_user_id: string;
+  otherUserId: string;
   type: 'direct' | 'group';
 };

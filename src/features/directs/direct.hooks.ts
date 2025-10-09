@@ -8,7 +8,7 @@ import { CreateDirect } from './types/create-direct';
 import { useSocket } from '@/shared/contexts/socket.provider';
 import { useEffect } from 'react';
 import { Direct } from './types/direct';
-import { Profile } from '../profile/types/profile';
+import { User } from '../user/types/user';
 
 export const useGetOrCreateDirect = () => {
   return useMutation({
@@ -28,20 +28,20 @@ export const useGetDirects = () => {
     if (!socket) return;
 
     const handleDirectSeenUpdated = (payload: {
-      conversation_id: string;
-      message_id: string;
-      user_id: string;
+      conversationId: string;
+      messageId: string;
+      userId: string;
     }) => {
       queryClient.setQueryData<{ directs: Direct[] }>(['directs'], (old) => {
         if (!old) return old;
         return {
           directs: old.directs.map((direct) => {
-            if (direct._id !== payload.conversation_id) return direct;
+            if (direct._id !== payload.conversationId) return direct;
             return {
               ...direct,
               participants: direct.participants.map((p) =>
-                (p.user as Profile)._id === payload.user_id
-                  ? { ...p, last_seen_message: payload.message_id }
+                (p.user as User)._id === payload.userId
+                  ? { ...p, lastSeenMessage: payload.messageId }
                   : p
               ),
             };

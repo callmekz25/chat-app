@@ -5,9 +5,9 @@ import { useEffect } from 'react';
 
 type Props = {
   messages: Message[];
-  conversation_id: string | undefined;
+  conversationId: string | undefined;
 };
-const useSeenMessage = ({ messages, conversation_id }: Props) => {
+const useSeenMessage = ({ messages, conversationId }: Props) => {
   const { data } = useGetMe();
   const socket = useSocket();
 
@@ -16,16 +16,16 @@ const useSeenMessage = ({ messages, conversation_id }: Props) => {
     if (messages.length > 0) {
       const newMessage = [...messages]
         .reverse()
-        .find((m) => m.user_id !== data!.user._id);
+        .find((m) => m.userId !== data!.user._id);
 
-      if (newMessage && !newMessage.seen_by.includes(data.user._id)) {
+      if (newMessage && !newMessage.seenBy.includes(data.user._id)) {
         socket.emit('message:seen', {
-          conversation_id: conversation_id,
-          message_id: newMessage._id,
+          conversationId: conversationId,
+          messageId: newMessage._id,
         });
       }
     }
-  }, [socket, conversation_id, messages, data]);
+  }, [socket, conversationId, messages, data]);
 };
 
 export default useSeenMessage;

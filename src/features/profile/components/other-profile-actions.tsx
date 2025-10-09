@@ -5,11 +5,11 @@ import { Relations } from '../types/relations';
 import React from 'react';
 import FollowSettingModal from '@/features/follow/components/follow-setting.modal';
 const OtherProfileActions = ({ relations }: { relations: Relations }) => {
-  const { user_name } = useParams();
+  const { userName } = useParams();
   const [openSettingFollow, setOpenSettingFollow] = React.useState(false);
   const { mutate: follow, isPending } = useFollowUser();
   const handleFollowUser = () => {
-    follow(user_name!, {
+    follow(userName!, {
       onSuccess: () => {
         alert('Followed');
       },

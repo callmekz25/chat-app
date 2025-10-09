@@ -6,7 +6,7 @@ import UserSkeleton from '@/shared/components/loading/user-skeleton';
 const SearchResults = () => {
   const { data: userRes } = useGetMe();
   const { data: followingsRes, isLoading } = useGetFollowings(
-    userRes!.user.user_name
+    userRes!.user.userName
   );
   return (
     <div

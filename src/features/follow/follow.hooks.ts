@@ -1,23 +1,23 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { followUser, getFollowers, getFollowings } from './follow.services';
 
-export const useGetFollowers = (user_name: string) => {
+export const useGetFollowers = (userName: string) => {
   return useQuery({
-    queryKey: ['followers', user_name],
-    queryFn: () => getFollowers(user_name),
-    enabled: !!user_name,
+    queryKey: ['followers', userName],
+    queryFn: () => getFollowers(userName),
+    enabled: !!userName,
   });
 };
-export const useGetFollowings = (user_name: string) => {
+export const useGetFollowings = (userName: string) => {
   return useQuery({
-    queryKey: ['followings', user_name],
-    queryFn: () => getFollowings(user_name),
-    enabled: !!user_name,
+    queryKey: ['followings', userName],
+    queryFn: () => getFollowings(userName),
+    enabled: !!userName,
   });
 };
 
 export const useFollowUser = () => {
   return useMutation({
-    mutationFn: (user_name: string) => followUser(user_name),
+    mutationFn: (userName: string) => followUser(userName),
   });
 };

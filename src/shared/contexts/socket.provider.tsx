@@ -8,7 +8,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const connectSocket = (token: string) => {
-    const s = io('http://localhost:8000', {
+    const s = io('http://localhost:5000', {
       transports: ['websocket'],
       auth: { token },
     });

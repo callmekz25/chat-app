@@ -22,15 +22,15 @@ export interface TypedAxiosInstance extends AxiosInstance {
   delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>;
 }
 const httpRequest: TypedAxiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/v1',
+  baseURL: 'http://localhost:5000/v1',
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
 httpRequest.interceptors.request.use((req) => {
-  const access_token = localStorage.getItem('access_token') ?? null;
-  if (access_token) {
-    req.headers.Authorization = `Bearer ${access_token}`;
+  const accessToken = localStorage.getItem('accessToken') ?? null;
+  if (accessToken) {
+    req.headers.Authorization = `Bearer ${accessToken}`;
   }
   return req;
 });
@@ -51,9 +51,9 @@ httpRequest.interceptors.response.use(
       try {
         const { data } = await httpRequest.post('/auth/refresh-token');
         if (data) {
-          saveAccessToken(data?.access_token);
+          saveAccessToken(data?.accessToken);
           originalRequest?.headers?.setAuthorization(
-            `Bearer ${data?.access_token}`
+            `Bearer ${data?.accessToken}`
           );
         }
         return httpRequest(originalRequest);

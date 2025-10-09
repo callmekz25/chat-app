@@ -1,7 +1,7 @@
 import Avatar from '@/shared/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { FormattedDirect } from '../types/direct';
-import { Profile } from '@/features/profile/types/profile';
+import { User } from '@/features/user/types/user';
 import { useGetOrCreateDirect } from '../direct.hooks';
 import { CreateDirect } from '../types/create-direct';
 import { useGetMe } from '@/features/profile/profile.hooks';
@@ -10,15 +10,15 @@ const InboxItem = ({
   item,
   isActive,
 }: {
-  item: FormattedDirect | Profile;
-  isActive: boolean;
+  item: FormattedDirect | User;
+  isActive?: boolean;
 }) => {
   const navigate = useNavigate();
   const { data } = useGetMe();
   const { mutate, isPending } = useGetOrCreateDirect();
 
-  const isSeen = 'name' in item && item.last_message.is_seen;
-  const lastMessage = 'name' in item ? item.last_message : null;
+  const isSeen = 'name' in item && item.lastMessage.isSeen;
+  const lastMessage = 'name' in item ? item.lastMessage : null;
   const handleNavigateConversation = () => {
     if (!item || isPending) return;
     // Item is a conversation just navigate
@@ -28,13 +28,13 @@ const InboxItem = ({
     // Item is a user then create conversation and navigate
     else {
       const payload: CreateDirect = {
-        other_user_id: item._id,
+        otherUserId: item._id,
         type: 'direct',
       };
       mutate(payload, {
         onSuccess: (data) => {
           if (data) {
-            navigate(`/direct/t/${data.conversation_id}`);
+            navigate(`/direct/t/${data.conversationId}`);
           }
         },
       });
@@ -53,7 +53,7 @@ const InboxItem = ({
       <div className=''>
         <div className={`w-[244px] text-sm `}>
           <span className={`${isSeen ? '' : 'font-semibold'}`}>
-            {'name' in item ? item.name : item.full_name}
+            {'name' in item ? item.name : item.fullName}
           </span>
         </div>
         <div className=''>
@@ -63,7 +63,7 @@ const InboxItem = ({
             }`}
           >
             {lastMessage &&
-              (lastMessage.user_id === data?.user._id
+              (lastMessage.userId === data?.user._id
                 ? `You: ${lastMessage.message}`
                 : lastMessage.message)}
           </span>

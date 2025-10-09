@@ -1,4 +1,5 @@
 import { Message } from '@/features/messages/types/message';
+import { MessageAction } from '@/features/messages/types/message-action';
 import { useSocket } from '@/shared/contexts/socket.provider';
 import { RefObject, useEffect, useRef } from 'react';
 
@@ -6,24 +7,30 @@ type Props = {
   bottomRef: RefObject<HTMLDivElement | null>;
   messages: Message[];
   typingUsers: Set<string>;
-  conversation_id: string | undefined;
+  conversationId: string | undefined;
+  messageAction: MessageAction | null;
 };
 const useScroll = ({
   bottomRef,
   messages,
   typingUsers,
-  conversation_id,
+  conversationId,
+  messageAction,
 }: Props) => {
   const isFirstLoad = useRef(true);
   const socket = useSocket();
 
   useEffect(() => {
-    if (!socket || !conversation_id) return;
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messageAction, bottomRef]);
+
+  useEffect(() => {
+    if (!socket || !conversationId) return;
     const handleNewMessage = (data: {
-      conversation_id: string;
+      conversationId: string;
       message: Message;
     }) => {
-      if (data.conversation_id === conversation_id) {
+      if (data.conversationId === conversationId) {
         requestAnimationFrame(() => {
           bottomRef?.current?.scrollIntoView({
             behavior: 'smooth',
@@ -35,12 +42,12 @@ const useScroll = ({
     return () => {
       socket.off('message:new', handleNewMessage);
     };
-  }, [socket, conversation_id, bottomRef]);
+  }, [socket, conversationId, bottomRef]);
 
   // Handle scroll last message
   useEffect(() => {
     isFirstLoad.current = true;
-  }, [conversation_id]);
+  }, [conversationId]);
 
   useEffect(() => {
     if (typingUsers.size > 0) {
@@ -59,6 +66,6 @@ const useScroll = ({
       });
       isFirstLoad.current = false;
     }
-  }, [messages, conversation_id]);
+  }, [messages, conversationId]);
 };
 export default useScroll;

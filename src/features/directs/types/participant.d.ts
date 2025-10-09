@@ -1,11 +1,11 @@
-import { Profile } from '@/features/profile/types/profile';
+import { User } from '@/features/user/types/user';
 
 export type Participant = {
-  user: Profile | string;
+  user: User;
 
   role: 'member' | 'leader';
 
-  joined_at: string;
+  joinedAt: string;
 
-  last_seen_message?: string;
+  lastSeenMessage?: string;
 };

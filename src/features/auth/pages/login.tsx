@@ -16,7 +16,7 @@ const Login = () => {
     login(payload, {
       onSuccess: (data) => {
         if (data) {
-          localStorage.setItem('access_token', data.data!.access_token);
+          localStorage.setItem('accessToken', data.data!.accessToken);
           navigate('/', { replace: true });
         }
       },
