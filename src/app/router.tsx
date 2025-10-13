@@ -1,41 +1,25 @@
-import DirectInbox from '@/features/directs/pages';
-import Layout from '@/layouts';
+import DirectInbox from '@/modules/directs/pages';
 import MessageLayout from '@/layouts/message-layout';
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import ProtectedRoute from './protected-route';
-const Home = lazy(() => import('@/features/home/index'));
-const Login = lazy(() => import('@/features/auth/pages/login'));
-const Register = lazy(() => import('@/features/auth/pages/register'));
-const Profile = lazy(() => import('@/features/profile/pages/index'));
-const Direct = lazy(() => import('@/features/directs/pages/direct'));
+const Login = lazy(() => import('@/modules/auth/pages/login'));
+const Register = lazy(() => import('@/modules/auth/pages/register'));
+const Direct = lazy(() => import('@/modules/directs/pages/direct'));
 const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
       {
-        element: <Layout />,
+        element: <MessageLayout />,
         children: [
           {
-            element: <Home />,
-            path: '/',
+            element: <DirectInbox />,
+            path: '/direct',
           },
           {
-            element: <Profile />,
-            path: '/:userName',
-          },
-          {
-            element: <MessageLayout />,
-            children: [
-              {
-                element: <DirectInbox />,
-                path: '/direct',
-              },
-              {
-                element: <Direct />,
-                path: '/direct/t/:conversationId',
-              },
-            ],
+            element: <Direct />,
+            path: '/direct/t/:conversationId',
           },
         ],
       },

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useGetMe } from '@/features/profile/profile.hooks';
+import { useGetMe } from '@/modules/profile/profile.hooks';
 import Loading from '@/shared/components/ui/loading';
 import { SocketProvider } from '@/shared/contexts/socket.provider';
 
