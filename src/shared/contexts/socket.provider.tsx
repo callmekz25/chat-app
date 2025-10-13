@@ -17,7 +17,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('accessToken');
     let cleanup: (() => void) | undefined;
     if (token) cleanup = connectSocket(token);
 
