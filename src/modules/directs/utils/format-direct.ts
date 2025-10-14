@@ -38,7 +38,7 @@ export function formatDirect(
   return {
     _id: c._id,
     type: c.type,
-    name: c.name,
+    name: other?.user.fullName,
     avatar: other?.user.avatar,
     participants: c.participants,
     lastMessage: lastMessage ? { ...lastMessage, isSeen } : null,

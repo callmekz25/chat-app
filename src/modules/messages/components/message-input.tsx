@@ -1,7 +1,6 @@
 import { useGetMe } from '@/modules/profile/profile.hooks';
 import EmojiIcon from '@/shared/components/icons/emoji-icon';
 import ImageIcon from '@/shared/components/icons/image-icon';
-import StickerIcon from '@/shared/components/icons/sticker-icon';
 import VoiceIcon from '@/shared/components/icons/voice-icon';
 import { useSocket } from '@/shared/contexts/socket.provider';
 import { useRef, useState } from 'react';
@@ -11,6 +10,7 @@ import { XIcon } from 'lucide-react';
 import { MessageAction } from '@/modules/messages/types/message-action';
 import { Participant } from '@/modules/directs/types/participant';
 import { User } from '@/modules/user/types/user';
+import MessageIcon from '@/shared/components/icons/message-icon';
 
 const MessageInput = ({
   messageReply,
@@ -76,7 +76,11 @@ const MessageInput = ({
     participants.find((p) => (p.user as User)._id === messageReply?.sendBy)
       ?.user;
   return (
-    <div className={messageReply ? 'border-t border-gray-800' : ''}>
+    <div
+      className={
+        messageReply ? 'border-t border-gray-200' : 'border-t border-gray-200'
+      }
+    >
       {messageReply && (
         <div className='pt-[10px] pb-[3px] px-[15px]'>
           <div className='flex items-center justify-between'>
@@ -91,12 +95,12 @@ const MessageInput = ({
           <p className='text-[13px] opacity-70'>{messageReply.message}</p>
         </div>
       )}
-      <div className='m-4'>
-        <div className='min-h-[44px] pr-4 pl-[11px] rounded-full border border-gray-700 flex items-center'>
-          <div className='p-1'>
-            <EmojiIcon />
+      <div className='m-4 '>
+        <div className='py-1.5 shadow-md pr-4 pl-[11px] rounded-full bg-[#F6F8FC]  flex items-center'>
+          <div className='p-2'>
+            <VoiceIcon />
           </div>
-          <div className='flex-1 ml-2 mr-1'>
+          <div className='flex-1 ml-1 mr-1'>
             <input
               type='text'
               value={message}
@@ -107,8 +111,8 @@ const MessageInput = ({
                 }
               }}
               onChange={(e) => handleInputChange(e)}
-              className='w-full outline-none text-[15px]'
-              placeholder='Message...'
+              className='w-full outline-none text-[15px] py-1.5'
+              placeholder='Type a message...'
             />
           </div>
           {message !== '' ? (
@@ -116,18 +120,15 @@ const MessageInput = ({
               onClick={() => handleSendMessage()}
               className=' hover:cursor-pointer font-medium text-blue-500 text-sm'
             >
-              Send
+              <MessageIcon />
             </button>
           ) : (
             <div className='flex items-center'>
-              <div className='p-2'>
-                <VoiceIcon />
-              </div>
               <div className='p-1'>
                 <ImageIcon />
               </div>
               <div className='p-2'>
-                <StickerIcon />
+                <EmojiIcon />
               </div>
             </div>
           )}

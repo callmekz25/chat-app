@@ -3,7 +3,7 @@ import { Participant } from './participant';
 
 export type Direct = {
   _id: string;
-  name: string;
+  name?: string;
   type: 'group' | 'direct';
   participants: Participant[];
   avatar?: {
@@ -15,7 +15,7 @@ export type Direct = {
 
 export type FormattedDirect = {
   _id: string;
-  name: string;
+  name?: string;
   type: 'group' | 'direct';
   avatar?: {
     url: string;

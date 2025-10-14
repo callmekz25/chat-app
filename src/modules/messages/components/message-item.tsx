@@ -32,7 +32,7 @@ const MessageItem = ({
         {!isMine && (
           <div className='flex items-end'>
             <div className='pl-[14px] pr-2'>
-              <Avatar className='size-[28px]' />
+              <Avatar className='size-12' />
             </div>
           </div>
         )}
@@ -78,7 +78,7 @@ const MessageItem = ({
 
         <div className={` flex flex-col items-end `}>
           <div
-            className={` w-fit py-1  px-3 rounded-[18px] relative max-w-[564px] ${
+            className={` w-fit py-1.5  px-4 rounded-[18px] relative max-w-[564px] ${
               isMine ? 'bg-[#004EFD] text-white' : ' bg-white text-black'
             }`}
           >

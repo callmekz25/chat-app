@@ -1,11 +1,8 @@
-import Avatar from '@/shared/components/ui/avatar';
-
 const TypingIndicator = ({ typingUsers }: { typingUsers: Set<string> }) => {
   if (typingUsers.size === 0) return null;
 
   return (
     <div className='flex items-center gap-2 px-4 py-2 text-sm text-gray-400'>
-      <Avatar className='size-[28px]' />
       <span>
         {typingUsers.size === 1
           ? 'Someone is typing...'

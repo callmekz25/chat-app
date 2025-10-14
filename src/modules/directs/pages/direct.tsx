@@ -51,8 +51,8 @@ const Direct = () => {
   });
 
   return (
-    <div className='h-dvh flex flex-col min-h-0'>
-      <div className='p-4 border-b border-gray-700'>
+    <div className='h-dvh flex flex-col min-h-0 '>
+      <div className='py-4 px-8 border-b border-gray-200'>
         <div className='min-h-[44px]'>
           {ild ? (
             <UserSkeleton />
@@ -60,15 +60,11 @@ const Direct = () => {
             <div className='flex items-center   justify-between'>
               <Link to={`/${direct?.name}`} className=''>
                 <div className='mr-2'>
-                  <div className=' flex '>
-                    <Avatar className=' mr-3 size-[44px]' />
-                    <div className='flex flex-col'>
-                      <div className=''>
-                        <span className='leading-5 line-clamp-1 whitespace-nowrap break-words font-semibold'>
-                          {direct?.name}
-                        </span>
-                      </div>
-                    </div>
+                  <div className=' flex items-center'>
+                    <Avatar className=' mr-3 size-14' />
+                    <span className='text-lg line-clamp-1 whitespace-nowrap break-words font-semibold'>
+                      {direct?.name}
+                    </span>
                   </div>
                 </div>
               </Link>
@@ -88,7 +84,7 @@ const Direct = () => {
         </div>
       </div>
       <main
-        className='flex-1 min-h-0 overflow-y-auto transition-all duration-200'
+        className='flex-1 min-h-0 pb-2 bg-[#F6F8FC] overflow-y-auto transition-all duration-200'
         ref={containerRef}
       >
         {isLoading ? (
@@ -135,12 +131,12 @@ const Direct = () => {
               </div>
               <div className=''>
                 <span className='leading-[18px] text-sm font-normal opacity-60'>
-                  {direct?.userName}
+                  {direct?.name}
                 </span>
               </div>
               <div className='py-6'>
                 <Link
-                  to={`/${direct?.userName}`}
+                  to={`/${direct?.name}`}
                   className=' hover:opacity-90 flex items-center justify-center font-semibold text-sm rounded-lg border border-[#2b3036] h-[32px] px-4 bg-[#2b3036]'
                 >
                   View profile
