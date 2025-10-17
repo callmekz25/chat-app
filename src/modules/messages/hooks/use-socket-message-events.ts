@@ -1,7 +1,12 @@
 import { useSocket } from '@/shared/contexts/socket.provider';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Message } from '../types/message';
+import {
+  appendMessageToCache,
+  replaceMessageInCache,
+  updateSeenMessageToCache,
+} from '../lib/message-cache';
 
 export const useSocketMessageEvents = () => {
   const socket = useSocket();
@@ -14,55 +19,26 @@ export const useSocketMessageEvents = () => {
         messageId: string;
         userId: string;
       }) => {
-        queryClient.setQueryData<InfiniteData<{ messages: Message[] }>>(
-          ['messages', data.conversationId],
-          (old) => {
-            if (!old) return old;
-
-            const newPages = old.pages.map((page) => {
-              return {
-                ...page,
-                messages: page.messages.map((m) => {
-                  if (m._id === data.messageId) {
-                    const seenBy = m.seenBy.includes(data.userId)
-                      ? m.seenBy
-                      : [...m.seenBy, data.userId];
-
-                    return { ...m, seenBy: seenBy };
-                  }
-                  return m;
-                }),
-              };
-            });
-
-            return { ...old, pages: newPages };
-          }
+        updateSeenMessageToCache(
+          queryClient,
+          data.conversationId,
+          data.messageId,
+          data.userId
         );
       };
 
       const handleUpdatedNewMessage = (data: {
         conversationId: string;
         message: Message;
+        tempId: string;
       }) => {
-        queryClient.setQueryData<InfiniteData<{ messages: Message[] }>>(
-          ['messages', data.conversationId],
-          (old) => {
-            if (!old) {
-              return {
-                pages: [{ messages: [data.message] }],
-                pageParams: [undefined],
-              };
-            }
-            const pages = [...old.pages];
-
-            pages[0] = {
-              ...pages[0],
-              messages: [...pages[0].messages, data.message],
-            };
-
-            return { ...old, pages };
-          }
+        replaceMessageInCache(
+          queryClient,
+          data.conversationId,
+          data.message,
+          data.tempId
         );
+        appendMessageToCache(queryClient, data.conversationId, data.message);
       };
       socket.on('message:new', handleUpdatedNewMessage);
       socket.on('message:seen:updated', handleUpdatedSeenMessage);

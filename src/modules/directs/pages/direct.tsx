@@ -103,14 +103,12 @@ const Direct = () => {
               const isSameUser = prevMessage && prevMessage.userId === m.sendBy;
 
               return (
-                <div
-                  key={m._id}
-                  className={`${isSameUser ? 'mt-1' : 'mt-[17px]'}`}
-                >
+                <div key={m._id} className={`${isSameUser ? 'mt-1' : 'mt-1'}`}>
                   <MessageItem
                     message={m}
                     messages={messages}
                     onMessageAction={setMessageAction}
+                    nextMessage={messages[index + 1]}
                   />
                 </div>
               );

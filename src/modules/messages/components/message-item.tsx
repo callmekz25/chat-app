@@ -5,21 +5,30 @@ import { getLastSeenMessageId } from '../utils/get-last-seen-message-id';
 import React from 'react';
 import { MessageAction } from '@/modules/messages/types/message-action';
 import { EllipsisVerticalIcon, ReplyIcon, SmileIcon } from 'lucide-react';
+import MessageActions from './message-actions';
+import MessageBubble from './message-bubble';
+import MessageAttachments from './message-attachments';
+import MessageSeenStatus from './message-seen-status';
 
 const MessageItem = ({
   message,
   messages,
   onMessageAction,
+  nextMessage,
 }: {
   message: Message;
   messages: Message[];
   onMessageAction: (action: MessageAction) => void;
+  nextMessage: Message;
 }) => {
   const { data } = useGetMe();
   const [hoverMessage, setHoverMessage] = React.useState(false);
   const lastSeenMessageId = getLastSeenMessageId(messages, data!.user._id);
 
   const isMine = data?.user._id === message.sendBy;
+
+  const isLastMessageOfSameUser =
+    !nextMessage || nextMessage.sendBy !== message.sendBy;
   return (
     <div
       className='flex'
@@ -29,108 +38,40 @@ const MessageItem = ({
       <div
         className={`${isMine ? ' ml-auto' : 'mr-auto '} flex items-center  `}
       >
-        {!isMine && (
+        {!isMine && isLastMessageOfSameUser && (
           <div className='flex items-end'>
             <div className='pl-[14px] pr-2'>
-              <Avatar className='size-12' />
+              <Avatar className='size-7' />
             </div>
           </div>
         )}
         {hoverMessage && isMine && (
-          <div className='mr-2'>
-            <div className={'flex item-center gap-3'}>
-              <button
-                className='cursor-pointer'
-                onClick={() =>
-                  onMessageAction({
-                    message: message,
-                    action: 'EMOJI',
-                  })
-                }
-              >
-                <SmileIcon className='size-5' />
-              </button>
-              <button
-                className='cursor-pointer'
-                onClick={() =>
-                  onMessageAction({
-                    message: message,
-                    action: 'REPLY',
-                  })
-                }
-              >
-                <ReplyIcon className='size-5' />
-              </button>
-              <button
-                className='cursor-pointer'
-                onClick={() =>
-                  onMessageAction({
-                    message: message,
-                    action: 'FORWARD',
-                  })
-                }
-              >
-                <EllipsisVerticalIcon className='size-5' />
-              </button>
-            </div>
-          </div>
+          <MessageActions
+            side='left'
+            message={message}
+            onAction={onMessageAction}
+          />
         )}
+        <div
+          className={`flex flex-col ${
+            isMine ? 'items-end' : 'items-start'
+          } mt-1 ${!isMine && !isLastMessageOfSameUser ? 'ml-[50px]' : ''}`}
+        >
+          <MessageBubble message={message} isMine={isMine} />
 
-        <div className={` flex flex-col items-end `}>
-          <div
-            className={` w-fit py-1.5  px-4 rounded-[18px] relative max-w-[564px] ${
-              isMine ? 'bg-[#004EFD] text-white' : ' bg-white text-black'
-            }`}
-          >
-            <span className='text-[15px] font-normal break-words leading-5'>
-              {message.message}
-            </span>
-          </div>
-
-          {message._id === lastSeenMessageId && (
-            <div className='px-3'>
-              <span className='text-[12px] opacity-80 leading-4'>Seen</span>
-            </div>
+          {message.attachments && message.attachments.length > 0 && (
+            <MessageAttachments attachments={message.attachments} />
           )}
+
+          {message._id === lastSeenMessageId && <MessageSeenStatus />}
         </div>
+
         {hoverMessage && !isMine && (
-          <div className='ml-2'>
-            <div className={'flex item-center gap-3'}>
-              <button
-                className='cursor-pointer'
-                onClick={() =>
-                  onMessageAction({
-                    message: message,
-                    action: 'EMOJI',
-                  })
-                }
-              >
-                <SmileIcon className='size-5' />
-              </button>
-              <button
-                className='cursor-pointer'
-                onClick={() =>
-                  onMessageAction({
-                    message: message,
-                    action: 'REPLY',
-                  })
-                }
-              >
-                <ReplyIcon className='size-5' />
-              </button>
-              <button
-                className='cursor-pointer'
-                onClick={() =>
-                  onMessageAction({
-                    message: message,
-                    action: 'FORWARD',
-                  })
-                }
-              >
-                <EllipsisVerticalIcon className='size-5' />
-              </button>
-            </div>
-          </div>
+          <MessageActions
+            side='left'
+            message={message}
+            onAction={onMessageAction}
+          />
         )}
 
         {isMine && <div className='w-4'></div>}
