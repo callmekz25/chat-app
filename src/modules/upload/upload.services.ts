@@ -6,12 +6,8 @@ export const uploadFile = async (payload: UploadFilePayload) => {
   for (const file of payload.files) {
     formData.append('files', file);
   }
-  const { data } = await httpRequest.post(
-    `/upload?type=${payload.type}`,
-    formData,
-    {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }
-  );
+  const { data } = await httpRequest.post(`/upload`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return data;
 };

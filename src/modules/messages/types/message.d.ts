@@ -1,11 +1,3 @@
-export enum MessageType {
-  TEXT = 'text',
-  IMAGE = 'image',
-  VOICE = 'voice',
-  FILE = 'file',
-  VIDEO = 'video',
-}
-
 export type Message = {
   _id: string;
   tempId: string;

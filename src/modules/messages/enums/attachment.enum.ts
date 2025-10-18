@@ -1,6 +1,6 @@
 export enum AttachmentType {
   IMAGE = 'image',
-  VOICE = 'voice',
-  FILE = 'file',
+  DOCUMENT = 'document',
   VIDEO = 'video',
+  AUDIO = 'audio',
 }
