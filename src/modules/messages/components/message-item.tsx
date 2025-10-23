@@ -60,7 +60,10 @@ const MessageItem = ({
           <MessageBubble message={message} isMine={isMine} />
 
           {message.attachments && message.attachments.length > 0 && (
-            <MessageAttachments attachments={message.attachments} />
+            <MessageAttachments
+              attachments={message.attachments}
+              isMine={isMine}
+            />
           )}
 
           {message._id === lastSeenMessageId && <MessageSeenStatus />}

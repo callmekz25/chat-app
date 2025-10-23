@@ -15,6 +15,8 @@ type PreviewFile = {
   file: File;
   url: string;
   type: AttachmentType;
+  fileName?: string;
+  fileSize?: number;
 };
 
 export const useMessageInput = (
@@ -83,11 +85,24 @@ export const useMessageInput = (
         isEdited: false,
         messageType: MessageType.TEXT,
         attachments: previewFiles.map((p) => {
-          return {
-            url: p.url,
-            publicId: '',
-            type: p.type,
-          };
+          switch (p.type) {
+            case AttachmentType.DOCUMENT:
+              return {
+                url: p.url,
+                publicId: '',
+                fileName: p.fileName,
+                fileSize: p.fileSize,
+                type: p.type,
+              };
+
+            default:
+              return {
+                url: p.url,
+                publicId: '',
+
+                type: p.type,
+              };
+          }
         }),
         createdAt: new Date().toISOString(),
       };
@@ -126,6 +141,8 @@ export const useMessageInput = (
         file,
         url: URL.createObjectURL(file),
         type: detectFileType(file.type),
+        fileName: file.name,
+        fileSize: file.size,
       };
     });
 

@@ -39,9 +39,9 @@ const PreviewFileItem = ({ file, url, type, onRemove }: Props) => {
 
       default:
         return (
-          <div className='flex flex-col  items-center justify-center size-20 bg-gray-300 rounded-lg'>
+          <div className='flex flex-col  items-center justify-center p-2 size-20 bg-gray-300 rounded-lg'>
             <FileTextIcon className='text-gray-500' />
-            <p className='text-sm line-clamp-3 w-16 text-center font-medium break-all'>
+            <p className='text-sm line-clamp-2 w-16 text-center font-medium break-all'>
               {file.name}
             </p>
           </div>
