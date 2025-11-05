@@ -65,6 +65,41 @@ export const useMessageInput = (
     }
   };
 
+  const insertEmoji = (emoji: string) => {
+    const el = textareaRef.current;
+    if (!el) return;
+
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+
+    const newMessage = message.slice(0, start) + emoji + message.slice(end);
+
+    setMessage(newMessage);
+
+    requestAnimationFrame(() => {
+      el.selectionStart = el.selectionEnd = start + emoji.length;
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+      el.focus();
+    });
+
+    if (socket) {
+      if (!isTyping) {
+        socket.emit('conversation:typing', { conversationId, userId });
+        setIsTyping(true);
+      }
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit('conversation:stopTyping', { conversationId, userId });
+        setIsTyping(false);
+      }, 3000);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!socket) return;
 
@@ -180,6 +215,7 @@ export const useMessageInput = (
     message,
     textareaRef,
     previewFiles,
+    insertEmoji,
     handleInputChange,
     handleSelectedFiles,
     handleRemoveFile,

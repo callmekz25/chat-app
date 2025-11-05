@@ -28,7 +28,6 @@ const Direct = () => {
   const bottomRef = React.useRef<HTMLDivElement | null>(null);
   const { data, isLoading: ild } = useGetDirectById(conversationId!);
   const direct = formatDirect(data?.direct, userRes?.user._id);
-  console.log(direct);
 
   const {
     containerRef,
@@ -84,7 +83,7 @@ const Direct = () => {
         </div>
       </div>
       <main
-        className='flex-1 min-h-0 pb-2 bg-[#F6F8FC] overflow-y-auto transition-all duration-200'
+        className='flex-1 min-h-0 pb-2 bg-white overflow-y-auto transition-all duration-200'
         ref={containerRef}
       >
         {isLoading ? (

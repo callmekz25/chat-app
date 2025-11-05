@@ -14,13 +14,13 @@ const MessageActions = ({
   <div className={`${side === 'left' ? 'ml-2' : 'mr-2'}`}>
     <div className='flex items-center gap-3'>
       <button onClick={() => onAction({ message, action: 'EMOJI' })}>
-        <SmileIcon className='size-5' />
+        <SmileIcon className='size-4' />
       </button>
       <button onClick={() => onAction({ message, action: 'REPLY' })}>
-        <ReplyIcon className='size-5' />
+        <ReplyIcon className='size-4' />
       </button>
       <button onClick={() => onAction({ message, action: 'FORWARD' })}>
-        <EllipsisVerticalIcon className='size-5' />
+        <EllipsisVerticalIcon className='size-4' />
       </button>
     </div>
   </div>

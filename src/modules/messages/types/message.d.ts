@@ -1,7 +1,9 @@
+import { User } from '@/modules/user/types/user';
+
 export type Message = {
   _id: string;
   tempId: string;
-  sendBy: string;
+  sendBy: User;
   messageType: string;
   isDeleted: boolean;
   isEdited: boolean;

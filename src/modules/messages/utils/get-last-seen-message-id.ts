@@ -6,7 +6,7 @@ export function getLastSeenMessageId(
 ) {
   for (let i = messages.length - 1; i >= 0; i--) {
     const m = messages[i];
-    if (m.sendBy === currentUserId && m.seenBy && m.seenBy.length > 0) {
+    if (m.sendBy._id === currentUserId && m.seenBy && m.seenBy.length > 0) {
       return m._id;
     }
   }

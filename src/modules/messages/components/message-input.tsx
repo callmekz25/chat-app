@@ -9,6 +9,8 @@ import { Participant } from '@/modules/directs/types/participant';
 import { User } from '@/modules/user/types/user';
 import { useMessageInput } from '../hooks/use-message-input';
 import PreviewFileItem from './preview-file-item';
+import React from 'react';
+import { MyEmojiPicker } from '@/shared/components/emoji-picker/emoji-picker';
 
 const MessageInput = ({
   messageReply,
@@ -21,12 +23,13 @@ const MessageInput = ({
 }) => {
   const { data } = useGetMe();
   const userId = data?.user?._id;
-
+  const [selectEmoji, setSelectEmoji] = React.useState(false);
   const {
     message,
     textareaRef,
     previewFiles,
     handleInputChange,
+    insertEmoji,
     handleSelectedFiles,
     handleRemoveFile,
     handleSendMessage,
@@ -34,8 +37,7 @@ const MessageInput = ({
 
   const userOfReplyMessage =
     participants &&
-    participants.find((p) => (p.user as User)._id === messageReply?.sendBy)
-      ?.user;
+    participants.find((p) => p.user._id === messageReply?.sendBy._id)?.user;
   return (
     <div
       className={
@@ -89,8 +91,15 @@ const MessageInput = ({
               </div>
             )}
             <div className='flex items-end w-full'>
-              <div className='p-2 '>
-                <EmojiIcon />
+              <div className='p-1 relative '>
+                <button onClick={() => setSelectEmoji(true)}>
+                  <EmojiIcon />
+                </button>
+                {selectEmoji && (
+                  <div className='absolute bottom-[120%] left-0 z-50  rounded-lg'>
+                    <MyEmojiPicker insertEmoji={insertEmoji!} />
+                  </div>
+                )}
               </div>
               <div className='flex-1 ml-1 mr-1 '>
                 <textarea

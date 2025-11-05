@@ -4,7 +4,6 @@ import Avatar from '@/shared/components/ui/avatar';
 import { getLastSeenMessageId } from '../utils/get-last-seen-message-id';
 import React from 'react';
 import { MessageAction } from '@/modules/messages/types/message-action';
-import { EllipsisVerticalIcon, ReplyIcon, SmileIcon } from 'lucide-react';
 import MessageActions from './message-actions';
 import MessageBubble from './message-bubble';
 import MessageAttachments from './message-attachments';
@@ -25,7 +24,7 @@ const MessageItem = ({
   const [hoverMessage, setHoverMessage] = React.useState(false);
   const lastSeenMessageId = getLastSeenMessageId(messages, data!.user._id);
 
-  const isMine = data?.user._id === message.sendBy;
+  const isMine = data?.user._id === message.sendBy._id;
 
   const isLastMessageOfSameUser =
     !nextMessage || nextMessage.sendBy !== message.sendBy;
