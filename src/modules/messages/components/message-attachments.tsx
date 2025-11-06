@@ -69,7 +69,15 @@ const MessageAttachments = ({
       className={`flex flex-col gap-2  ${isMine ? 'items-end' : 'items-start'}`}
     >
       {attachments.map((att) => {
-        return <div className=''>{renderAttachments(att)}</div>;
+        return (
+          <div className=''>
+            {att.isLoading ? (
+              <div className='w-[240px] h-[260px] rounded-xl bg-gray-300 animate-pulse flex items-center justify-center'></div>
+            ) : (
+              <div className=''>{renderAttachments(att)}</div>
+            )}
+          </div>
+        );
       })}
     </div>
   );

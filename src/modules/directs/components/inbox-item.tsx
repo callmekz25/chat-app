@@ -17,7 +17,8 @@ const InboxItem = ({
   const { data } = useGetMe();
   const { mutate, isPending } = useGetOrCreateDirect();
 
-  const isSeen = 'name' in item && item.lastMessage.isSeen;
+  // TODO: Fix isSeen not working
+  const isSeen = 'name' in item && item.lastMessage?.isSeen;
   const lastMessage = 'name' in item ? item.lastMessage : null;
   const handleNavigateConversation = () => {
     if (!item || isPending) return;
@@ -40,6 +41,8 @@ const InboxItem = ({
       });
     }
   };
+  console.log(isSeen);
+
   return (
     <div
       onClick={() => handleNavigateConversation()}
@@ -63,8 +66,8 @@ const InboxItem = ({
             }`}
           >
             {lastMessage &&
-              (lastMessage.userId === data?.user._id
-                ? `You: ${lastMessage.message}`
+              (lastMessage.sendBy._id === data?.user._id
+                ? `Bạn: ${lastMessage.message}`
                 : lastMessage.message)}
           </span>
         </div>

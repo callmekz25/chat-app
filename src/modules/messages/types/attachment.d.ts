@@ -9,4 +9,5 @@ export type Attachment = {
   duration?: number;
   width?: number;
   height?: number;
+  isLoading: boolean;
 };

@@ -3,7 +3,7 @@ import { AttachmentType } from '../enums/attachment.enum';
 export type SendMessage = {
   conversationId: string;
 
-  tempId: string;
+  tempId: string | null;
 
   message: string;
 

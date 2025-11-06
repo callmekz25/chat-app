@@ -32,13 +32,16 @@ export const useSocketMessageEvents = () => {
         message: Message;
         tempId: string;
       }) => {
-        replaceMessageInCache(
-          queryClient,
-          data.conversationId,
-          data.message,
-          data.tempId
-        );
-        appendMessageToCache(queryClient, data.conversationId, data.message);
+        if (data.tempId) {
+          replaceMessageInCache(
+            queryClient,
+            data.conversationId,
+            data.message,
+            data.tempId
+          );
+        } else {
+          appendMessageToCache(queryClient, data.conversationId, data.message);
+        }
       };
       socket.on('message:new', handleUpdatedNewMessage);
       socket.on('message:seen:updated', handleUpdatedSeenMessage);

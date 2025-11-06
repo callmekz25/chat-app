@@ -13,7 +13,7 @@ const MessageBubble = ({
   if (!message || message.message === '') {
     return null;
   }
-  console.log(message);
+
   const myReplyMessage =
     message.replyMessage && message.replyMessage.sendBy._id === data?.user._id;
   return (
@@ -29,7 +29,7 @@ const MessageBubble = ({
               {myReplyMessage ? 'bạn' : message.replyMessage.sendBy.fullName}
             </p>
           </div>
-          <div className='w-fit py-1 px-4 whitespace-pre-wrap rounded-[18px] max-w-[564px] bg-[#f7f7f7] text-black'>
+          <div className='w-fit py-1.5 px-4 whitespace-pre-wrap rounded-[18px] max-w-[564px] bg-[rgb(247,247,247)] text-black'>
             <span className='text-[15px] font-normal break-words leading-5'>
               {message.replyMessage.message}
             </span>
@@ -37,7 +37,7 @@ const MessageBubble = ({
         </div>
       )}
       <div
-        className={`w-fit py-1 px-4 whitespace-pre-wrap rounded-[18px] max-w-[564px] ${
+        className={`w-fit py-1.5 px-4 whitespace-pre-wrap rounded-[18px] max-w-[564px] ${
           isMine ? 'bg-[#056df6] text-white' : 'bg-[#f0f0f0] text-black'
         }`}
       >

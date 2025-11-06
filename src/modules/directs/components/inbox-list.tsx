@@ -9,8 +9,8 @@ import { Direct } from '../types/direct';
 const InboxList = () => {
   const { data } = useGetMe();
   const { conversationId } = useParams();
-  const { data: directsResponse, isLoading } = useGetDirects();
-  const directs = directsResponse?.directs.map((d: Direct) =>
+  const { data: res, isLoading } = useGetDirects();
+  const directs = res?.directs.map((d: Direct) =>
     formatDirect(d, data?.user._id)
   );
 

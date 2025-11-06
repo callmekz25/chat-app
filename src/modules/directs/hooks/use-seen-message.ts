@@ -16,7 +16,7 @@ const useSeenMessage = ({ messages, conversationId }: Props) => {
     if (messages.length > 0) {
       const newMessage = [...messages]
         .reverse()
-        .find((m) => m.sendBy !== data!.user._id);
+        .find((m) => m.sendBy._id !== data!.user._id);
 
       if (newMessage && !newMessage.seenBy.includes(data.user._id)) {
         socket.emit('message:seen', {

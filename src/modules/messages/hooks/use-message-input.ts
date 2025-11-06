@@ -10,6 +10,7 @@ import React from 'react';
 import { Message } from '../types/message';
 import { detectFileType } from '@/shared/utils/detect-file-type';
 import { UploadedFileResponse } from '../types/uploaded-file-response';
+import { User } from '@/modules/user/types/user';
 
 type PreviewFile = {
   file: File;
@@ -19,10 +20,7 @@ type PreviewFile = {
   fileSize?: number;
 };
 
-export const useMessageInput = (
-  messageReply: Message | null,
-  userId?: string
-) => {
+export const useMessageInput = (messageReply: Message | null, user?: User) => {
   const queryClient = useQueryClient();
   const socket = useSocket();
   const { conversationId } = useParams();
@@ -32,6 +30,7 @@ export const useMessageInput = (
   const [message, setMessage] = React.useState('');
   const [previewFiles, setPreviewFiles] = React.useState<PreviewFile[]>([]);
 
+  const userId = user?._id;
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (socket) {
       const value = e.target.value;
@@ -107,52 +106,38 @@ export const useMessageInput = (
       return;
     }
     let uploadedAttachments: UploadedFileResponse[] | [] = [];
-    const id = crypto.randomUUID();
+    let tempId = null;
     // Add temp message to cache for render and upload images
     // Send event send to save message and event new replace temp message
     if (previewFiles.length > 0) {
+      tempId = crypto.randomUUID();
       const tempMessage: Message = {
-        tempId: id.toString(),
+        tempId: tempId.toString(),
         conversationId: conversationId!,
-        sendBy: userId!,
+        sendBy: user!,
         message: message,
         isDeleted: false,
         isEdited: false,
         messageType: MessageType.TEXT,
         attachments: previewFiles.map((p) => {
-          switch (p.type) {
-            case AttachmentType.DOCUMENT:
-              return {
-                url: p.url,
-                publicId: '',
-                fileName: p.fileName,
-                fileSize: p.fileSize,
-                type: p.type,
-              };
-
-            default:
-              return {
-                url: p.url,
-                publicId: '',
-
-                type: p.type,
-              };
-          }
+          return {
+            isLoading: true,
+          };
         }),
         createdAt: new Date().toISOString(),
       };
+
+      handleRemoveAllFile();
       appendMessageToCache(queryClient, conversationId!, tempMessage);
 
       uploadedAttachments = await uploadFile({
         files: previewFiles.map((p) => p.file),
       });
-
-      handleRemoveAllFile();
     }
     const payload: SendMessage = {
       conversationId: conversationId!,
       message,
-      tempId: id.toString(),
+      tempId: tempId ? tempId.toString() : null,
       messageType: MessageType.TEXT,
       attachments: uploadedAttachments,
       replyMessageId: messageReply?._id?.toString() || null,

@@ -22,5 +22,5 @@ export type FormattedDirect = {
     publicId: string;
   };
   participants: Participant[];
-  lastMessage: Message;
+  lastMessage?: Message;
 };

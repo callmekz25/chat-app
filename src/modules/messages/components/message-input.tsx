@@ -6,7 +6,6 @@ import { Message } from '@/modules/messages/types/message';
 import { SendHorizonalIcon, XIcon } from 'lucide-react';
 import { MessageAction } from '@/modules/messages/types/message-action';
 import { Participant } from '@/modules/directs/types/participant';
-import { User } from '@/modules/user/types/user';
 import { useMessageInput } from '../hooks/use-message-input';
 import PreviewFileItem from './preview-file-item';
 import React from 'react';
@@ -22,7 +21,6 @@ const MessageInput = ({
   onMessageAction: (value: MessageAction | null) => void;
 }) => {
   const { data } = useGetMe();
-  const userId = data?.user?._id;
   const [selectEmoji, setSelectEmoji] = React.useState(false);
   const {
     message,
@@ -33,7 +31,7 @@ const MessageInput = ({
     handleSelectedFiles,
     handleRemoveFile,
     handleSendMessage,
-  } = useMessageInput(messageReply, userId);
+  } = useMessageInput(messageReply, data?.user);
 
   const userOfReplyMessage =
     participants &&
@@ -60,7 +58,7 @@ const MessageInput = ({
       )}
 
       <div className='m-4 '>
-        <div className='py-1  pr-2 pl-[11px] rounded-3xl bg-[#edeff1]  flex items-center'>
+        <div className='py-1  pr-2 pl-[11px] rounded-3xl bg-[#f0f2f5]  flex items-center'>
           <div className='flex flex-col w-full'>
             {previewFiles.length > 0 && (
               <div className='flex flex-wrap gap-2 px-4 pt-2 pb-1'>

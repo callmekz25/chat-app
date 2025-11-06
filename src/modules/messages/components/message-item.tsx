@@ -23,8 +23,10 @@ const MessageItem = ({
   const { data } = useGetMe();
   const [hoverMessage, setHoverMessage] = React.useState(false);
   const lastSeenMessageId = getLastSeenMessageId(messages, data!.user._id);
-
-  const isMine = data?.user._id === message.sendBy._id;
+  if (!data) {
+    return null;
+  }
+  const isMine = data.user._id === message.sendBy._id;
 
   const isLastMessageOfSameUser =
     !nextMessage || nextMessage.sendBy !== message.sendBy;

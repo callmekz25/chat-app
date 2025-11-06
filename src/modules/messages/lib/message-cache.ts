@@ -45,7 +45,7 @@ export const replaceMessageInCache = (
       const pages = old.pages.map((page) => ({
         ...page,
         messages: page.messages.map((m) =>
-          m._id === replaceMessageId ? newMessage : m
+          m.tempId === replaceMessageId ? newMessage : m
         ),
       }));
 
