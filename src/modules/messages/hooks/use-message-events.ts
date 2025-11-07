@@ -8,7 +8,7 @@ import {
   updateSeenMessageToCache,
 } from '../lib/message-cache';
 
-export const useSocketMessageEvents = () => {
+export const useMessageEvents = () => {
   const socket = useSocket();
   const queryClient = useQueryClient();
 

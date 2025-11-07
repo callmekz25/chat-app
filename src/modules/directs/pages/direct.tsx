@@ -19,6 +19,9 @@ import { formatDirect } from '../utils/format-direct';
 import { useGetMessages } from '@/modules/messages/hooks/use-get-messages';
 import { MessageAction } from '@/modules/messages/types/message-action';
 import { Message } from '@/modules/messages/types/message';
+import { useCallEvents } from '@/modules/call/hooks/use-call-events';
+import CallModal from '@/modules/call/components/call.modal';
+import { IncomingCallModal } from '@/modules/call/components/incoming-call.modal';
 
 const Direct = () => {
   const { data: userRes } = useGetMe();
@@ -27,8 +30,12 @@ const Direct = () => {
   const { conversationId } = useParams();
   const bottomRef = React.useRef<HTMLDivElement | null>(null);
   const { data, isLoading: ild } = useGetDirectById(conversationId!);
-  const direct = formatDirect(data?.direct, userRes?.user._id);
-
+  const currentUser = userRes?.user;
+  const direct = formatDirect(data?.direct, currentUser?._id);
+  const otherUser = direct.participants?.filter(
+    (p) => p?.user?._id !== currentUser?._id
+  )[0]?.user;
+  const { call, acceptCall, endCall, startCall } = useCallEvents();
   const {
     containerRef,
     handleTopReached,
@@ -51,7 +58,7 @@ const Direct = () => {
 
   return (
     <div className='h-dvh flex flex-col min-h-0 '>
-      <div className='py-4 px-8 border-b border-gray-200'>
+      <div className='py-3 px-8 border-b border-gray-200'>
         <div className='min-h-[44px]'>
           {ild ? (
             <UserSkeleton />
@@ -60,7 +67,7 @@ const Direct = () => {
               <Link to={`/${direct?.name}`} className=''>
                 <div className='mr-2'>
                   <div className=' flex items-center'>
-                    <Avatar className=' mr-3 size-14' />
+                    <Avatar className=' mr-3 size-12' />
                     <span className='text-lg line-clamp-1 whitespace-nowrap break-words font-semibold'>
                       {direct?.name}
                     </span>
@@ -68,9 +75,18 @@ const Direct = () => {
                 </div>
               </Link>
               <div className='flex items-center'>
-                <div className='p-2'>
+                <button
+                  className='p-2'
+                  onClick={() =>
+                    startCall({
+                      callerId: currentUser!._id,
+                      callerName: currentUser!.fullName,
+                      conversationId: conversationId!,
+                    })
+                  }
+                >
                   <CallIcon />
-                </div>
+                </button>
                 <div className='p-2'>
                   <CallVideoIcon />
                 </div>
@@ -143,6 +159,31 @@ const Direct = () => {
           </div>
         )}
       </main>
+      <>
+        {call.isOutgoing && (
+          <CallModal
+            mode='outgoing'
+            targetName={call.callee?.name!}
+            onCancel={endCall}
+          />
+        )}
+
+        {call.isIncoming && (
+          <IncomingCallModal
+            callerName={call.caller?.name!}
+            onAccept={() => acceptCall(currentUser!._id)}
+            onReject={endCall}
+          />
+        )}
+
+        {call.isCalling && (
+          <CallModal
+            mode='in-call'
+            targetName={call.callee?.name || call.caller?.name!}
+            onCancel={endCall}
+          />
+        )}
+      </>
       <MessageInput
         messageReply={
           messageAction?.action === 'REPLY' ? messageAction.message : null

@@ -15,7 +15,7 @@ export type Direct = {
 
 export type FormattedDirect = {
   _id: string;
-  name?: string;
+  name: string;
   type: 'group' | 'direct';
   avatar?: {
     url: string;

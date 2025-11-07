@@ -121,6 +121,7 @@ export const useMessageInput = (messageReply: Message | null, user?: User) => {
         messageType: MessageType.TEXT,
         attachments: previewFiles.map((p) => {
           return {
+            type: p.type,
             isLoading: true,
           };
         }),

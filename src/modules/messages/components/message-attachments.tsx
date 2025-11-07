@@ -72,7 +72,13 @@ const MessageAttachments = ({
         return (
           <div className=''>
             {att.isLoading ? (
-              <div className='w-[240px] h-[260px] rounded-xl bg-gray-300 animate-pulse flex items-center justify-center'></div>
+              <div
+                className={` rounded-2xl bg-gray-300 animate-pulse flex items-center justify-center ${
+                  att.type === AttachmentType.DOCUMENT
+                    ? 'w-[300px] h-[70px]'
+                    : 'w-[240px] h-[260px]'
+                }`}
+              ></div>
             ) : (
               <div className=''>{renderAttachments(att)}</div>
             )}

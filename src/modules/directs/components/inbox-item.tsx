@@ -1,7 +1,6 @@
 import Avatar from '@/shared/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { FormattedDirect } from '../types/direct';
-import { User } from '@/modules/user/types/user';
 import { useGetOrCreateDirect } from '../direct.hooks';
 import { CreateDirect } from '../types/create-direct';
 import { useGetMe } from '@/modules/profile/profile.hooks';
@@ -10,16 +9,16 @@ const InboxItem = ({
   item,
   isActive,
 }: {
-  item: FormattedDirect | User;
+  item: FormattedDirect;
   isActive?: boolean;
 }) => {
   const navigate = useNavigate();
   const { data } = useGetMe();
   const { mutate, isPending } = useGetOrCreateDirect();
 
-  // TODO: Fix isSeen not working
-  const isSeen = 'name' in item && item.lastMessage?.isSeen;
-  const lastMessage = 'name' in item ? item.lastMessage : null;
+  const isSeen = item.lastMessage?.isSeen;
+  const lastMessage = item.lastMessage;
+
   const handleNavigateConversation = () => {
     if (!item || isPending) return;
     // Item is a conversation just navigate
@@ -41,7 +40,6 @@ const InboxItem = ({
       });
     }
   };
-  console.log(isSeen);
 
   return (
     <div
@@ -55,11 +53,9 @@ const InboxItem = ({
       </div>
       <div className=''>
         <div className={`w-[244px] text-sm `}>
-          <span className={`${isSeen ? '' : 'font-semibold'}`}>
-            {'name' in item ? item.name : item.fullName}
-          </span>
+          <span className={`font-semibold`}>{item.name ? item.name : ''}</span>
         </div>
-        <div className=''>
+        <div className='mt-1'>
           <span
             className={`text-[12px] font-normal  truncate block max-w-[247px]  ${
               isSeen ? 'opacity-60' : 'font-semibold'
@@ -67,8 +63,16 @@ const InboxItem = ({
           >
             {lastMessage &&
               (lastMessage.sendBy._id === data?.user._id
-                ? `Bạn: ${lastMessage.message}`
-                : lastMessage.message)}
+                ? // 🟢 Trường hợp chính mình gửi
+                  lastMessage.attachments && lastMessage.attachments?.length > 0
+                  ? 'Bạn đã gửi một file đính kèm'
+                  : `Bạn: ${lastMessage.message || 'Đã gửi tin nhắn'}`
+                : // 🔵 Trường hợp người khác gửi
+                lastMessage.attachments && lastMessage.attachments?.length > 0
+                ? `${lastMessage.sendBy.fullName} đã gửi một file đính kèm`
+                : `${lastMessage.sendBy.fullName}: ${
+                    lastMessage.message || 'Đã gửi tin nhắn'
+                  }`)}
           </span>
         </div>
       </div>

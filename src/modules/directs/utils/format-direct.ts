@@ -21,7 +21,7 @@ export function formatDirect(
 
   const isSeen =
     !!lastMessage &&
-    (lastMessage.sendBy === userId ||
+    (lastMessage.sendBy._id === userId ||
       lastMessage._id === currentUser?.lastSeenMessage);
 
   if (c.type === 'group') {

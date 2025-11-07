@@ -18,11 +18,13 @@ const InboxList = () => {
     <div className=' h-full min-h-0 flex flex-col'>
       <div className=' overflow-y-auto flex-1 min-h-0'>
         {isLoading ? (
-          [
-            ...Array(8).map((_, i) => {
-              return <UserSkeleton key={i} />;
-            }),
-          ]
+          [...Array(8)].map((_, i) => {
+            return (
+              <div className='py-2 px-6' key={i}>
+                <UserSkeleton className='size-[56px]' />
+              </div>
+            );
+          })
         ) : directs && directs.length > 0 ? (
           directs.map((item) => {
             return (
