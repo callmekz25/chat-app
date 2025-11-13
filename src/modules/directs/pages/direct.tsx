@@ -35,7 +35,13 @@ const Direct = () => {
   const otherUser = direct.participants?.filter(
     (p) => p?.user?._id !== currentUser?._id
   )[0]?.user;
-  const { call, acceptCall, endCall, startCall } = useCallEvents();
+  const localVideoRef = React.useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = React.useRef<HTMLVideoElement>(null);
+
+  const { call, acceptCall, endCall, startCall } = useCallEvents(
+    localVideoRef,
+    remoteVideoRef
+  );
   const {
     containerRef,
     handleTopReached,
@@ -82,6 +88,8 @@ const Direct = () => {
                       callerId: currentUser!._id,
                       callerName: currentUser!.fullName,
                       conversationId: conversationId!,
+                      calleeId: otherUser!._id,
+                      calleName: otherUser!.fullName,
                     })
                   }
                 >
@@ -160,29 +168,23 @@ const Direct = () => {
         )}
       </main>
       <>
-        {call.isOutgoing && (
-          <CallModal
-            mode='outgoing'
-            targetName={call.callee?.name!}
-            onCancel={endCall}
-          />
-        )}
-
-        {call.isIncoming && (
-          <IncomingCallModal
-            callerName={call.caller?.name!}
-            onAccept={() => acceptCall(currentUser!._id)}
-            onReject={endCall}
-          />
-        )}
-
-        {call.isCalling && (
-          <CallModal
-            mode='in-call'
-            targetName={call.callee?.name || call.caller?.name!}
-            onCancel={endCall}
-          />
-        )}
+        <CallModal
+          mode={
+            call.isIncoming
+              ? 'incoming'
+              : call.isOutgoing
+              ? 'outgoing'
+              : call.isCalling
+              ? 'in-call'
+              : 'hidden'
+          }
+          call={call}
+          localVideoRef={localVideoRef}
+          remoteVideoRef={remoteVideoRef}
+          onAccept={() => acceptCall(currentUser!._id)}
+          onReject={endCall}
+          onCancel={endCall}
+        />
       </>
       <MessageInput
         messageReply={
